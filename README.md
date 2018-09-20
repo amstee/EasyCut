@@ -1,0 +1,2 @@
+# EasyCut
+Easy cut server
