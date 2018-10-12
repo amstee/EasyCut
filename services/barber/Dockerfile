@@ -1,8 +1,15 @@
-FROM golang:1.11-alpine3.8
+FROM alpine:3.8
+ARG service
+ENV BINARY=$service
 
-RUN mkdir /service
-WORKDIR /service
+RUN adduser -D -g '' appuser
 
-RUN go build -o build/barber .
+RUN mkdir -p /go/bin/
 
-CMD ["/service/build/barber"]
+COPY release/${service} /go/bin/
+
+WORKDIR /go/bin/
+
+USER appuser
+
+ENTRYPOINT /go/bin/$BINARY
