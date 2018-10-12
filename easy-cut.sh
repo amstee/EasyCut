@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 services=( appointment auth barber rating salon user )
 
 if [[ -z "${TAG}" ]]; then
@@ -13,7 +15,6 @@ if [ $1 = "release" ]; then
         cd ..
     done
     echo "Release of all services done"
-    echo $TAG
 fi
 
 if [ $1 = "build" ]; then
