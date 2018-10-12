@@ -1,6 +1,8 @@
 package src
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func PrintHello() {
 	fmt.Println("Hello appointment service")

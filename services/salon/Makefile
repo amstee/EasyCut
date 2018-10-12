@@ -13,7 +13,7 @@ all:	guard-SERVICE release build
 .PHONY: release
 release:	guard-SERVICE
 	mkdir -p release
-	GOOS=$(os) GOARCH=amd64 go build -o release/$(SERVICE)
+	CGO_ENABLED=0 GOOS=$(os) GOARCH=amd64 go build -o release/$(SERVICE)
 
 clean:
 	rm -rf ./release
