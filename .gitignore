@@ -13,7 +13,6 @@
 
 # Build directories
 release/
-build/
 
 # IDE
 .idea/
