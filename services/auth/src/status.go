@@ -9,9 +9,7 @@ func SystemStatus(w http.ResponseWriter, _ *http.Request)  {
 	w.Write([]byte("Auth Service Version : 0.0.1"))
 }
 
-
-func CreateStatusRouter() *mux.Router {
-	router := mux.NewRouter()
-	router.HandleFunc("/status", SystemStatus)
+func SetStatusRoutes(router *mux.Router) *mux.Router {
+	router.HandleFunc("/", SystemStatus)
 	return router
 }
