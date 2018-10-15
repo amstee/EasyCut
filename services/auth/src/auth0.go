@@ -27,7 +27,7 @@ func getPermCert(token *jwt.Token) (string, error) {
 	for _, key := range jwks.Keys {
 		if token.Header["kid"] == key.Kid {
 			cert = "-----BEGIN CERTIFICATE-----\n" + key.X5c[0] + "\n-----END CERTIFICATE-----"
-		}
+		} // Reload jwks in else condition
 	}
 	if cert == "" {
 		err := errors.New("unable to find appropriate key")
