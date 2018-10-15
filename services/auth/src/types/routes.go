@@ -1,10 +1,5 @@
 package types
 
-type HttpMessage struct {
-	Message string	`json:"message"`
-	Success bool	`json:"success"`
-}
-
 type PermissionsParam struct {
 	Scopes []string			`json:"scopes"`
 }

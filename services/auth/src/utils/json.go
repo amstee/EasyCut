@@ -3,7 +3,21 @@ package utils
 import (
 	"net/http"
 	"encoding/json"
+	"strings"
+	"errors"
 )
+
+func GetBearer(r *http.Request) (string, error) {
+	authHeaderParts := strings.Split(r.Header.Get("Authorization"), " ")
+	if len(authHeaderParts) < 2 {
+		return "", errors.New("authorization token not found")
+	}
+	if authHeaderParts[0] == "Bearer" {
+		tokenString := authHeaderParts[1]
+		return tokenString,  nil
+	}
+	return "", errors.New("invalided identifier found")
+}
 
 func ResponseJSON(data interface{}, w http.ResponseWriter, statusCode int) {
 	jsonResponse, err := json.Marshal(data); if err != nil {

@@ -7,26 +7,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/amstee/easy-cut/services/auth/src/types"
 	"strings"
 )
 
-type CustomClaims struct {
-	Scope string `json:"scope"`
-	jwt.StandardClaims
-}
-
-type Jwks struct {
-	Keys []JSONWebKeys `json:"keys"`
-}
-
-type JSONWebKeys struct {
-	Kty string `json:"kty"`
-	Kid string `json:"kid"`
-	Use string `json:"use"`
-	N string `json:"n"`
-	E string `json:"e"`
-	X5c []string `json:"x5c"`
-}
 
 func getPermCert(token *jwt.Token) (string, error) {
 	cert := ""
@@ -35,7 +19,7 @@ func getPermCert(token *jwt.Token) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	var jwks = Jwks{}
+	var jwks = types.Jwks{}
 	err = json.NewDecoder(resp.Body).Decode(&jwks); if err != nil {
 		return cert, err
 	}
@@ -55,17 +39,25 @@ func getPermCert(token *jwt.Token) (string, error) {
 func GetJwtMiddleware() (* jwtmiddleware.JWTMiddleware, error) {
 	middleware := jwtmiddleware.New(jwtmiddleware.Options{
 		ValidationKeyGetter: CheckTokenValidity,
-		SigningMethod: jwt.SigningMethodES256,
+		SigningMethod: jwt.SigningMethodRS256,
 	})
 	return middleware, nil
 }
 
 func CheckTokenValidity(token *jwt.Token) (interface{}, error) {
 	aud := "https://easy-cut.eu.auth0.com/api/v2/"
-	checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false)
-	if !checkAud {
+	iss := "https://easy-cut.eu.auth0.com/"
+
+	if token.Header["alg"] != jwt.SigningMethodRS256.Alg() {
+		return token, errors.New("invalid signature")
+	}
+	checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false); if !checkAud {
+		return token, errors.New("invalid audience")
+	}
+	checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(iss, false); if !checkIss {
 		return token, errors.New("invalid issuer")
 	}
+
 	cert, err := getPermCert(token)
 	if err != nil {
 		return nil, err
@@ -75,15 +67,23 @@ func CheckTokenValidity(token *jwt.Token) (interface{}, error) {
 }
 
 func CheckScope(scope string, tokenString string) (bool) {
-	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, nil); if err != nil {
+	token, err := jwt.ParseWithClaims(tokenString, &types.CustomClaims{}, func (token *jwt.Token) (interface{}, error) {
+		cert, err := getPermCert(token)
+		if err != nil {
+			return nil, err
+		}
+		result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
+		return result, nil
+	}); if err != nil {
 		fmt.Println("invalid token string for scope checking")
 		return false
 	}
-	claims, _ := token.Claims.(*CustomClaims)
-	result := strings.Split(claims.Scope, " ")
-	for _, s := range result {
-		if s == scope {
-			return true
+	claims, ok := token.Claims.(*types.CustomClaims); if ok && token.Valid {
+		result := strings.Split(claims.Scope, " ")
+		for _, s := range result {
+			if s == scope {
+				return true
+			}
 		}
 	}
 	return false
