@@ -25,6 +25,25 @@ func CheckToken(w http.ResponseWriter, r *http.Request) {
 	utils.ResponseJSON(types.HttpMessage{Message: "token is valid", Success: true}, w, 200)
 }
 
+func Groups(w http.ResponseWriter, r *http.Request) {
+	var groups types.GroupsParam
+	var resp *types.GroupsResponse
+
+	token, err := utils.GetBearer(r); if err != nil {
+		utils.ResponseJSON(types.HttpMessage{Message: err.Error(), Success: false}, w, http.StatusInternalServerError)
+		return
+	}
+	err = utils.DecodeJSON(&groups, r); if err != nil {
+		utils.ResponseJSON(types.HttpMessage{Message: "unable to decode json body", Success: false}, w, http.StatusInternalServerError)
+		return
+	}
+	resp, err = CheckGroups(groups.Groups, token); if err != nil {
+		utils.ResponseJSON(types.HttpMessage{Message: "unable to check user groups", Success: false}, w, http.StatusInternalServerError)
+		return
+	}
+	utils.ResponseJSON(resp, w, 200)
+}
+
 func Permissions(w http.ResponseWriter, r *http.Request) {
 	var perms types.PermissionsParam
 	resp := types.PermissionsResponse{Scopes: make(map[string]bool)}
@@ -52,4 +71,5 @@ func SetAuthenticationRoutes(router *mux.Router) {
 
 func SetAuthenticatedRoutes(router *mux.Router) {
 	router.HandleFunc("/permissions", Permissions).Methods("POST")
+	router.HandleFunc("/groups", Groups).Methods("POST")
 }

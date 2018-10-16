@@ -2,7 +2,20 @@ package types
 
 import "github.com/dgrijalva/jwt-go"
 
-type CustomClaims struct {
+type UserGroups struct {
+	AppMetadata struct{
+		Authorization struct {
+			Groups []string	`json:"groups"`
+		}	`json:"authorization"`
+	}	`json:"app_metadata"`
+}
+
+type GroupClaims struct {
+	Group string `json:"group"`
+	jwt.StandardClaims
+}
+
+type PermissionClaims struct {
 	Scope string `json:"scope"`
 	jwt.StandardClaims
 }
