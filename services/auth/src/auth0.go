@@ -9,7 +9,6 @@ import (
 	"github.com/amstee/easy-cut/services/auth/src/types"
 	"github.com/amstee/easy-cut/services/auth/src/utils"
 	"net/http"
-	"bytes"
 	"encoding/json"
 )
 
@@ -66,23 +65,41 @@ func CheckScope(scope string, tokenString string) (bool) {
 	return false
 }
 
+func GetUser(tokenString string) (string, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		cert, err := utils.GetCertificate(token); if err != nil {
+			return nil, err
+		}
+		result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
+		return result, nil
+	}); if err != nil {
+		return "", err
+	}
+	claims, ok := token.Claims.(*jwt.StandardClaims); if ok && token.Valid {
+		return claims.Subject, nil
+	}
+	return "", errors.New("unable to extract claims")
+}
+
 func GetUserGroups(tokenInfo *types.TokenInfo) ([]string, error) {
 	var userGroup types.UserGroups
-	jsonStr, err := json.Marshal(tokenInfo); if err != nil {
+	userId, err := GetUser(tokenInfo.Token); if err != nil {
 		return nil, err
 	}
-	resp, err := http.Post("https://easy-cut.eu.auth0.com/tokeninfo", "application/json", bytes.NewBuffer(jsonStr)); if err != nil {
+	url := "https://easy-cut.eu.auth0.com/api/v2/users/" + userId
+	req, err := http.NewRequest("GET", url, nil); if err != nil {
 		return nil, err
 	}
-	fmt.Println(resp.StatusCode)
+	req.Header.Add("Authorization", "Bearer " + tokenInfo.Token)
+	client := &http.Client{}
+	resp, err := client.Do(req); if err != nil {
+		return nil, err
+	}
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(&userGroup); if err != nil {
-		fmt.Println(resp.Body)
-		fmt.Println(err.Error())
 		return nil, err
 	}
-	fmt.Println(userGroup)
 	return userGroup.AppMetadata.Authorization.Groups, nil
 }
 
