@@ -1,4 +1,4 @@
-package src
+package handlers
 
 import (
 	"github.com/gorilla/mux"
@@ -6,6 +6,7 @@ import (
 	"github.com/amstee/easy-cut/services/auth/src/types"
 	"github.com/amstee/easy-cut/services/auth/src/utils"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/amstee/easy-cut/services/auth/src/core"
 )
 
 func CheckToken(w http.ResponseWriter, r *http.Request) {
@@ -14,11 +15,11 @@ func CheckToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := jwt.Parse(tokenString, CheckTokenValidity); if err != nil {
+	token, err := jwt.Parse(tokenString, core.CheckTokenValidity); if err != nil {
 		utils.ResponseJSON(types.HttpMessage{Message: "unable to parse jwt", Success: false}, w, http.StatusInternalServerError)
 		return
 	}
-	_, err = CheckTokenValidity(token); if err != nil {
+	_, err = core.CheckTokenValidity(token); if err != nil {
 		utils.ResponseJSON(types.HttpMessage{Message: "token is invalid", Success: false}, w, http.StatusInternalServerError)
 		return
 	}
@@ -37,7 +38,7 @@ func Groups(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseJSON(types.HttpMessage{Message: "unable to decode json body", Success: false}, w, http.StatusInternalServerError)
 		return
 	}
-	resp, err = CheckGroups(groups.Groups, token); if err != nil {
+	resp, err = core.CheckGroups(groups.Groups, token); if err != nil {
 		utils.ResponseJSON(types.HttpMessage{Message: "unable to check user groups", Success: false}, w, http.StatusInternalServerError)
 		return
 	}
@@ -59,7 +60,7 @@ func Permissions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for _, scope := range perms.Scopes {
-		isAllowed = CheckScope(scope, token)
+		isAllowed = core.CheckScope(scope, token)
 		resp.Scopes[scope] = isAllowed
 	}
 	utils.ResponseJSON(resp, w, 200)

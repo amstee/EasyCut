@@ -1,4 +1,4 @@
-package src
+package core
 
 import (
 	"github.com/auth0/go-jwt-middleware"
@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"strings"
 	"github.com/amstee/easy-cut/services/auth/src/types"
-	"github.com/amstee/easy-cut/services/auth/src/utils"
 	"net/http"
 	"encoding/json"
 )
@@ -34,7 +33,7 @@ func CheckTokenValidity(token *jwt.Token) (interface{}, error) {
 		return token, errors.New("invalid issuer")
 	}
 
-	cert, err := utils.GetCertificate(token)
+	cert, err := GetCertificate(token)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +43,7 @@ func CheckTokenValidity(token *jwt.Token) (interface{}, error) {
 
 func CheckScope(scope string, tokenString string) (bool) {
 	token, err := jwt.ParseWithClaims(tokenString, &types.PermissionClaims{}, func (token *jwt.Token) (interface{}, error) {
-		cert, err := utils.GetCertificate(token)
+		cert, err := GetCertificate(token)
 		if err != nil {
 			return nil, err
 		}
@@ -67,7 +66,7 @@ func CheckScope(scope string, tokenString string) (bool) {
 
 func GetUser(tokenString string) (string, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		cert, err := utils.GetCertificate(token); if err != nil {
+		cert, err := GetCertificate(token); if err != nil {
 			return nil, err
 		}
 		result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
