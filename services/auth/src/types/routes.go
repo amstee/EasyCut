@@ -1,5 +1,11 @@
 package types
 
+type StatusResponse struct {
+	Status string 			`json:"status"`
+	Service string			`json:"service"`
+	Version string			`json:"version"`
+}
+
 type PermissionsParam struct {
 	Scopes []string			`json:"scopes"`
 }

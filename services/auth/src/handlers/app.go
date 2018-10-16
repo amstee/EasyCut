@@ -67,7 +67,7 @@ func Permissions(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetAuthenticationRoutes(router *mux.Router) {
-	router.HandleFunc("/token", CheckToken).Methods("GET")
+	router.HandleFunc("", CheckToken).Methods("GET")
 }
 
 func SetAuthenticatedRoutes(router *mux.Router) {

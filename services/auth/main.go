@@ -14,7 +14,7 @@ import (
 func initialize(router *mux.Router, checkAuth *jwtmiddleware.JWTMiddleware) (*negroni.Negroni) {
 	auth := mux.NewRouter()
 	status := router.PathPrefix("/status").Subrouter()
-	authentication := router.PathPrefix("/auth").Subrouter()
+	authentication := router.PathPrefix("/token").Subrouter()
 	authenticated := auth.PathPrefix("/secure").Subrouter()
 
 	router.PathPrefix("/secure").Handler(
