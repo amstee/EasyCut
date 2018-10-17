@@ -1,0 +1,8 @@
+{
+  "port": 8081,
+  "origins": [
+    "http://easy-cut.ovh",
+    "https://easy-cut.ovh",
+    "http://localhost"
+  ]
+}

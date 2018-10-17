@@ -3,8 +3,9 @@ package handlers
 import (
 	"github.com/gorilla/mux"
 	"net/http"
-	"github.com/amstee/easy-cut/services/auth/src/types"
-	"github.com/amstee/easy-cut/services/auth/src/utils"
+	"github.com/amstee/easy-cut/utils/types"
+	"github.com/amstee/easy-cut/services/auth/src/vars"
+	"github.com/amstee/easy-cut/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/amstee/easy-cut/services/auth/src/core"
 )
@@ -27,8 +28,8 @@ func CheckToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func Groups(w http.ResponseWriter, r *http.Request) {
-	var groups types.GroupsParam
-	var resp *types.GroupsResponse
+	var groups vars.GroupsParam
+	var resp *vars.GroupsResponse
 
 	token, err := utils.GetBearer(r); if err != nil {
 		utils.ResponseJSON(types.HttpMessage{Message: err.Error(), Success: false}, w, http.StatusInternalServerError)
@@ -46,8 +47,8 @@ func Groups(w http.ResponseWriter, r *http.Request) {
 }
 
 func Permissions(w http.ResponseWriter, r *http.Request) {
-	var perms types.PermissionsParam
-	resp := types.PermissionsResponse{Scopes: make(map[string]bool)}
+	var perms vars.PermissionsParam
+	resp := vars.PermissionsResponse{Scopes: make(map[string]bool)}
 	var isAllowed bool
 
 	token, err := utils.GetBearer(r); if err != nil {

@@ -1,0 +1,13 @@
+{
+  "port": 8080,
+  "origins": [
+    "http://easy-cut.ovh",
+    "https://easy-cut.ovh",
+    "http://localhost"
+  ],
+  "security": "http://localhost:8081",
+  "routes": [{
+    "route": "/status",
+    "permissions": []
+  }]
+}

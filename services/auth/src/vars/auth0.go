@@ -1,4 +1,4 @@
-package types
+package vars
 
 import "github.com/dgrijalva/jwt-go"
 

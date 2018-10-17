@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/amstee/easy-cut/services/auth/src/types"
+	"github.com/amstee/easy-cut/services/auth/src/vars"
 )
 
-var JWKS *types.Jwks
+var JWKS *vars.Jwks

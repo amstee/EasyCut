@@ -6,7 +6,8 @@ import (
 	"github.com/amstee/easy-cut/services/auth/src/cache"
 	"github.com/dgrijalva/jwt-go"
 	"errors"
-	"github.com/amstee/easy-cut/services/auth/src/types"
+	"github.com/amstee/easy-cut/services/auth/src/vars"
+	"github.com/amstee/easy-cut/services/auth/src/config"
 )
 
 func FindKey(token *jwt.Token) (string, bool) {
@@ -32,13 +33,13 @@ func GetCertificate(token *jwt.Token) (string, error) {
 }
 
 func SetJwks() error {
-	resp, err := http.Get("https://easy-cut.eu.auth0.com/.well-known/jwks.json"); if err != nil {
+	resp, err := http.Get(config.Content.Jwks); if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
 	if cache.JWKS == nil {
-		cache.JWKS = new(types.Jwks)
+		cache.JWKS = new(vars.Jwks)
 	}
 	err = json.NewDecoder(resp.Body).Decode(cache.JWKS); if err != nil {
 		return err

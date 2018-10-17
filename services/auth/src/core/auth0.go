@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"github.com/amstee/easy-cut/services/auth/src/types"
+	"github.com/amstee/easy-cut/services/auth/src/vars"
 	"net/http"
 	"encoding/json"
 )
@@ -42,7 +42,7 @@ func CheckTokenValidity(token *jwt.Token) (interface{}, error) {
 }
 
 func CheckScope(scope string, tokenString string) (bool) {
-	token, err := jwt.ParseWithClaims(tokenString, &types.PermissionClaims{}, func (token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &vars.PermissionClaims{}, func (token *jwt.Token) (interface{}, error) {
 		cert, err := GetCertificate(token)
 		if err != nil {
 			return nil, err
@@ -53,7 +53,7 @@ func CheckScope(scope string, tokenString string) (bool) {
 		fmt.Println("invalid token string for scope checking")
 		return false
 	}
-	claims, ok := token.Claims.(*types.PermissionClaims); if ok && token.Valid {
+	claims, ok := token.Claims.(*vars.PermissionClaims); if ok && token.Valid {
 		result := strings.Split(claims.Scope, " ")
 		for _, s := range result {
 			if s == scope {
@@ -80,8 +80,8 @@ func GetUser(tokenString string) (string, error) {
 	return "", errors.New("unable to extract claims")
 }
 
-func GetUserGroups(tokenInfo *types.TokenInfo) ([]string, error) {
-	var userGroup types.UserGroups
+func GetUserGroups(tokenInfo *vars.TokenInfo) ([]string, error) {
+	var userGroup vars.UserGroups
 	userId, err := GetUser(tokenInfo.Token); if err != nil {
 		return nil, err
 	}
@@ -102,10 +102,10 @@ func GetUserGroups(tokenInfo *types.TokenInfo) ([]string, error) {
 	return userGroup.AppMetadata.Authorization.Groups, nil
 }
 
-func CheckGroups(groups []string, tokenString string) (*types.GroupsResponse, error) {
+func CheckGroups(groups []string, tokenString string) (*vars.GroupsResponse, error) {
 	var isInGroup bool
-	tokenInfo := types.TokenInfo{Token: tokenString}
-	resp := types.GroupsResponse{Groups: make(map[string]bool)}
+	tokenInfo := vars.TokenInfo{Token: tokenString}
+	resp := vars.GroupsResponse{Groups: make(map[string]bool)}
 
 	userGroups, err := GetUserGroups(&tokenInfo); if err != nil {
 		return nil, err
