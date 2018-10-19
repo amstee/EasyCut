@@ -20,8 +20,8 @@ func GetJwtMiddleware() (* jwtmiddleware.JWTMiddleware, error) {
 }
 
 func CheckTokenValidity(token *jwt.Token) (interface{}, error) {
-	aud := "https://src-cut.eu.auth0.com/api/v2/"
-	iss := "https://src-cut.eu.auth0.com/"
+	aud := "https://easy-cut.eu.auth0.com/api/v2/"
+	iss := "https://easy-cut.eu.auth0.com/"
 
 	if token.Header["alg"] != jwt.SigningMethodRS256.Alg() {
 		return token, errors.New("invalid signature")
@@ -85,7 +85,7 @@ func GetUserGroups(tokenInfo *vars.TokenInfo) ([]string, error) {
 	userId, err := GetUser(tokenInfo.Token); if err != nil {
 		return nil, err
 	}
-	url := "https://src-cut.eu.auth0.com/api/v2/users/" + userId
+	url := "https://easy-cut.eu.auth0.com/api/v2/users/" + userId
 	req, err := http.NewRequest("GET", url, nil); if err != nil {
 		return nil, err
 	}
