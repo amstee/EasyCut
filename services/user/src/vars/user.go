@@ -9,11 +9,26 @@ type AppMetadata struct {
 type UserCreation struct {
 	Connection	string 		`json:"connection"`
 	Email		string		`json:"email"`
-	Username	string		`json:"username"`
 	Password	string		`json:"password"`
-	Phone		string		`json:"phone_number"`
 	EVerified	bool		`json:"email_verified"`
 	VerifyEmail	bool		`json:"verify_email"`
-	VerifyPhone	bool		`json:"phone_verified"`
 	Metadata 	AppMetadata	`json:"app_metadata"`
+}
+
+type Identity struct {
+	Connection string 		`json:"connection"`
+	UserId string 			`json:"user_id"`
+	Provider string 		`json:"provider"`
+	Social bool 			`json:"isSocial"`
+}
+
+type UserResponse struct {
+	Email string			`json:"email"`
+	EmailVerified bool		`json:"email_verified"`
+	Updated string			`json:"updated_at"`
+	Created string 			`json:"created_at"`
+	Picture string 			`json:"picture"`
+	UserId string 			`json:"user_id"`
+	Identities []Identity	`json:"identities"`
+	Metadata AppMetadata	`json:"app_metadata"`
 }

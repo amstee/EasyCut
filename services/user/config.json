@@ -5,9 +5,18 @@
     "https://easy-cut.ovh",
     "http://localhost"
   ],
+  "domain": "https://easy-cut.eu.auth0.com/",
+  "api": "api/v2/",
+  "oauth": "oauth/token",
   "security": "http://localhost:8081",
-  "routes": [{
-    "route": "/status",
-    "permissions": []
-  }]
+  "routes": [
+    {
+      "route": "/status",
+      "permissions": []
+    },
+    {
+      "route": "/create",
+      "permissions": []
+    }
+  ]
 }

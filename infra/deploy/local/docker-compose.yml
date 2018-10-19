@@ -1,35 +1,35 @@
 version: '3'
 services:
   auth:
-    image: "amstee/easy-cut-auth:${TAG}"
+    image: "amstee/src-cut-auth:${TAG}"
     ports:
     - 8080:8080
   appoitment:
-    image: "amstee/easy-cut-appointment:${TAG}"
+    image: "amstee/src-cut-appointment:${TAG}"
     ports:
       -  8085:8080
     links:
       - auth
   barber:
-    image: "amstee/easy-cut-barber:${TAG}"
+    image: "amstee/src-cut-barber:${TAG}"
     ports:
       - 8082:8080
     links:
       - auth
   rating:
-    image: "amstee/easy-cut-rating:${TAG}"
+    image: "amstee/src-cut-rating:${TAG}"
     ports:
       - 8083:8080
     links:
       - auth
   salon:
-    image: "amstee/easy-cut-salon:${TAG}"
+    image: "amstee/src-cut-salon:${TAG}"
     ports:
       - 8084:8080
     links:
       - auth
   user:
-    image: "amstee/easy-cut-user:${TAG}"
+    image: "amstee/src-cut-user:${TAG}"
     ports:
       - 8081:8080
     links:

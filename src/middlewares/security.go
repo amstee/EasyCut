@@ -1,13 +1,14 @@
-package utils
+package middlewares
 
 import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"encoding/json"
-	"github.com/amstee/easy-cut/utils/types"
-	"github.com/amstee/easy-cut/utils/config"
+	"github.com/amstee/easy-cut/src/types"
+	"github.com/amstee/easy-cut/src/config"
 	"bytes"
 	"errors"
+	"github.com/amstee/easy-cut/src/common"
 )
 
 type GroupsQuery struct {
@@ -65,7 +66,7 @@ func GetSecurityMiddleware() (mux.MiddlewareFunc) {
 			for _, perm := range config.Content.Routes {
 				if perm.Route == cr {
 					if len(perm.Permissions) != 0 {
-						token, err := GetBearer(r); if err != nil {
+						token, err := common.GetBearer(r); if err != nil {
 							ResponseError(types.HttpMessage{Message: "cannot find token", Success: false}, w, 500)
 							return
 						}
@@ -84,7 +85,7 @@ func GetSecurityMiddleware() (mux.MiddlewareFunc) {
 					return
 				}
 			}
-			ResponseError(types.HttpMessage{Message: "route " + cr + "not found", Success: false}, w, 500)
+			ResponseError(types.HttpMessage{Message: "route " + cr + " not found", Success: false}, w, 500)
 		})
 	}
 }

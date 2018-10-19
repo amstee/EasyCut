@@ -1,11 +1,21 @@
-package utils
+package common
 
 import (
 	"net/http"
 	"encoding/json"
 	"strings"
 	"errors"
+	"bytes"
+	"fmt"
 )
+
+func JsonToReader(data interface{}) (*bytes.Buffer, error) {
+	jsonData, err := json.Marshal(data); if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	return bytes.NewBuffer(jsonData), nil
+}
 
 func GetBearer(r *http.Request) (string, error) {
 	authHeaderParts := strings.Split(r.Header.Get("Authorization"), " ")
