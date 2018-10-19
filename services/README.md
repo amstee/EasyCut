@@ -19,7 +19,19 @@ To see more details about these endpoints check the [Auth service](auth/README.m
 
 ## User
 
-To be developed
+This service allow third parties to manipulate auth0 users, is allows you to find users,
+create users, ...
+It also allows you to manipulate user's easy cut profile.
+
+It exposes five different endpoints for auth0 users management :
+
+* Server status : `GET /user/status`
+* Create user : `POST /user/create`
+* List users : `GET /user/list` **TODO**
+* Get a user info : `GET /user/<user_id>` **TODO**
+* Update user : `PUT /user/update` **TODO**
+
+For more details about these endpoints check the [User service](user/README.md)
 
 ## Barber
 
