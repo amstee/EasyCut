@@ -10,6 +10,9 @@ if [ $1 = "deploy" ]; then
     if [ $2 = "local" ]; then
         cd "infra/deploy/local"
         TAG=${TAG} docker-compose up
+    elif [ $2 = "swarm" ]; then
+    	cd "infra/deploy/swarm"
+    	TAG=${TAG} docker stack deploy -c docker-compose.yml easy-cut-${TAG}
     else
         echo "Commad deploy ${2} unknown"
     fi
