@@ -57,17 +57,21 @@ func (c *DataConfig) LoadEnv() (error) {
 		}
 		c.Port = p
 	}
-	if security := os.Getenv("AUTH_JWKS"); security != "" {
+	if security := os.Getenv("AUTH_URL"); security != "" {
 		c.Security = security
 	}
 	if env := os.Getenv("EASY_CUT_ENV"); env != "" {
 		c.Env = env
 	}
-	if clientId := os.Getenv("EASY_CUT_CLIENT_ID"); clientId != "" {
+	if clientId := os.Getenv("API_CLIENT_ID"); clientId != "" {
 		c.ClientId = clientId
+	} else {
+		fmt.Println("Warning : Client id not set")
 	}
-	if clientSecret := os.Getenv("EASY_CUT_CLIENT_SECRET"); clientSecret != "" {
+	if clientSecret := os.Getenv("API_CLIENT_SECRET"); clientSecret != "" {
 		c.ClientSecret = clientSecret
+	} else {
+		fmt.Println("Warning : Client secret not set")
 	}
 	return nil
 }

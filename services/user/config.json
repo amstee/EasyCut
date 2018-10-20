@@ -8,7 +8,7 @@
   "domain": "https://easy-cut.eu.auth0.com/",
   "api": "api/v2/",
   "oauth": "oauth/token",
-  "security": "http://localhost:8081",
+  "security": "http://auth:8080",
   "routes": [
     {
       "route": "/status",

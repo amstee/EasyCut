@@ -19,5 +19,8 @@ clean:
 	rm -rf ./release
 
 build:	guard-SERVICE
-	docker build --build-arg service=$(SERVICE) -t amstee/easy-cut-$(SERVICE)":"$(TAG) .
+	docker build	--build-arg service=$(SERVICE) \
+			--build-arg api_id=$(API_CLIENT_ID) \
+			--build-arg api_secret=$(API_CLIENT_SECRET) \
+			-t amstee/easy-cut-$(SERVICE)":"$(TAG) .
 

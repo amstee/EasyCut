@@ -1,37 +1,24 @@
 version: '3'
 services:
+  nginx:
+    image: nginx:1.15-alpine
+    container_name: "nginx" # _${TAG}
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+      - 443:443
+
   auth:
     image: "amstee/easy-cut-auth:${TAG}"
-    ports:
-    - 8080:8080
-  appoitment:
-    image: "amstee/easy-cut-appointment:${TAG}"
-    ports:
-      -  8085:8080
-    links:
-      - auth
-  barber:
-    image: "amstee/easy-cut-barber:${TAG}"
-    ports:
-      - 8082:8080
-    links:
-      - auth
-  rating:
-    image: "amstee/easy-cut-rating:${TAG}"
-    ports:
-      - 8083:8080
-    links:
-      - auth
-  salon:
-    image: "amstee/easy-cut-salon:${TAG}"
-    ports:
-      - 8084:8080
-    links:
-      - auth
+    container_name: "auth" # _${TAG}
+    expose:
+      - 8080
   user:
     image: "amstee/easy-cut-user:${TAG}"
-    ports:
-      - 8081:8080
+    container_name: "user"  # _${TAG}
+    expose:
+      - 8080
     links:
       - auth
 
