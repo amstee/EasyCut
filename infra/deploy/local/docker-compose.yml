@@ -2,24 +2,27 @@ version: '3'
 services:
   nginx:
     image: nginx:1.15-alpine
-    container_name: "nginx" # _${TAG}
+    container_name: "nginx"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 80:80
       - 443:443
-
   auth:
     image: "amstee/easy-cut-auth:${TAG}"
-    container_name: "auth" # _${TAG}
+    container_name: "auth"
     expose:
       - 8080
   user:
     image: "amstee/easy-cut-user:${TAG}"
-    container_name: "user"  # _${TAG}
+    container_name: "user"
     expose:
       - 8080
+    environment:
+      API_CLIENT_ID: "${API_CLIENT_ID}"
+      API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
     links:
       - auth
-
+    volumes:
+      - ./secrets.json:/run/secrets/auth0_api
 

@@ -9,6 +9,7 @@
   "api": "api/v2/",
   "oauth": "oauth/token",
   "security": "http://auth:8080",
+  "sfile": "/run/secrets/auth0_api",
   "routes": [
     {
       "route": "/status",

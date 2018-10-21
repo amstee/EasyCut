@@ -116,49 +116,51 @@ If you want to deploy your swarm cluster locally follow this tutorial : https://
 2. install docker-compose
 3. Run `docker swarm init` on your master and read the output
 4. Add your nodes to the cluster `docker swarm join --token <token> ...`
-5. Configure docker to talk to your master : `eval $(docker-machine env swarm-master)`
-6. Add the nginx configuration file on the master node. Example (docker-machine): `docker-machine scp -r ./nginx.conf swarm-master:/home/docker/nginx.conf`
-7. Deploy : `TAG=dev docker stack deploy --compose-file docker-compost.yml easy-cut-dev`
+5. Configure docker to talk to your master. Example (docker-machine): `eval $(docker-machine env swarm-master)`
+6. Add the docker-compose.yml file on the master node. Example (docker-machine): `docker-machine scp -r ./docker-compose.yml swarm-master:/home/docker/docker-compose.yml`
+7. Add the nginx configuration file on the master node. Example (docker-machine): `docker-machine scp -r ./nginx.conf swarm-master:/home/docker/nginx.conf`
+8. Set the environment variables **API_CLIENT_ID** and **API_CLIENT_SECRET**
+9. SSH to your master machine and deploy : `TAG=dev docker stack deploy --compose-file docker-compose.yml easy-cut-dev`
 
 ```yaml
-version: '3'
+version: '3.1'
 networks:
   services:
   proxy:
 services:
   nginx:
     image: nginx:1.15-alpine
-    container_name: "nginx"
     volumes:
-      - "/home/docker/nginx.conf:/etc/nginx/nginx.conf"
+      - "./nginx.conf:/etc/nginx/nginx.conf"
     ports:
       - 80:80
       - 443:443
     deploy:
       placement:
         constraints: [node.role == manager]
-    restart: always
+    depends_on:
+      - auth
+      - user
     networks:
       - services
       - proxy
   auth:
     image: "amstee/easy-cut-auth:${TAG}"
-    container_name: "auth"
-    restart: always
     deploy:
       replicas: 2
     networks:
       - services
   user:
     image: "amstee/easy-cut-user:${TAG}"
-    container_name: "user"
-    restart: always
     deploy:
       replicas: 2
     links:
       - auth
     networks:
       - services
+    environment:
+      API_CLIENT_ID: "${API_CLIENT_ID}"
+      API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
 ```
 
 ### Kubernetes

@@ -15,12 +15,13 @@ release:	guard-SERVICE
 	mkdir -p release
 	CGO_ENABLED=0 GOOS=$(os) GOARCH=amd64 go build -o release/$(SERVICE)
 
+push:	guard-SERVICE
+	docker push amstee/easy-cut-$(SERVICE):$(TAG)
+
 clean:
 	rm -rf ./release
 
 build:	guard-SERVICE
 	docker build	--build-arg service=$(SERVICE) \
-			--build-arg api_id=$(API_CLIENT_ID) \
-			--build-arg api_secret=$(API_CLIENT_SECRET) \
 			-t amstee/easy-cut-$(SERVICE)":"$(TAG) .
 
