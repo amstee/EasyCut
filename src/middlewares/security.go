@@ -9,6 +9,8 @@ import (
 	"bytes"
 	"errors"
 	"github.com/amstee/easy-cut/src/common"
+
+	"regexp"
 )
 
 type GroupsQuery struct {
@@ -29,14 +31,16 @@ func ResponseError(data interface{}, w http.ResponseWriter, statusCode int) {
 	w.Write(jsonResponse)
 }
 
-func RequestGroups(token string, permissions GroupsQuery) (*GroupsResponse, error) {
+func RequestGroups(token string, permissions GroupsQuery, complement string) (*GroupsResponse, error) {
 	var result GroupsResponse
 	client := &http.Client{}
 
 	jsonData, err := json.Marshal(permissions); if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", config.Content.Security + "/secure/groups", bytes.NewBuffer(jsonData)); if err != nil {
+	req, err := http.NewRequest("POST", config.Content.Security + "/secure/groups" + complement,
+								bytes.NewBuffer(jsonData))
+	if err != nil {
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
@@ -58,25 +62,45 @@ func RequestGroups(token string, permissions GroupsQuery) (*GroupsResponse, erro
 func GetSecurityMiddleware() (mux.MiddlewareFunc) {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			user := ""
 			route := mux.CurrentRoute(r)
 			cr, err := route.GetPathTemplate(); if err != nil {
-				ResponseError(types.HttpMessage{Message: "cannot get path template", Success: false}, w, 500)
+				ResponseError(types.HttpMessage{Message: "cannot get path template", Success: false},
+								w, http.StatusInternalServerError)
 				return
 			}
 			for _, perm := range config.Content.Routes {
-				if perm.Route == cr {
+				match, err := regexp.MatchString(perm.Route, cr); if err != nil {
+					ResponseError(types.HttpMessage{Message: "invalid route referenced in config file", Success: false},
+						w, http.StatusInternalServerError)
+					return
+				}
+				if match {
 					if len(perm.Permissions) != 0 {
 						token, err := common.GetBearer(r); if err != nil {
-							ResponseError(types.HttpMessage{Message: "cannot find token", Success: false}, w, 500)
+							ResponseError(types.HttpMessage{Message: "cannot find token", Success: false},
+											w, http.StatusBadRequest)
 							return
 						}
-						groups, err := RequestGroups(token, GroupsQuery{Groups: perm.Permissions}); if err != nil {
-							ResponseError(types.HttpMessage{Message: "cannot retrieve permissions", Success: false}, w, 500)
+						if perm.MatchUser {
+							v := mux.Vars(r)
+							tmp, ok := v["user"]; if !ok {
+								ResponseError(types.HttpMessage{Message: "cannot find user", Success: false},
+												w, http.StatusBadRequest)
+								return
+							}
+							user =  "/" + tmp
+						}
+						groups, err := RequestGroups(token, GroupsQuery{Groups: perm.Permissions}, user)
+						if err != nil {
+							ResponseError(types.HttpMessage{Message: "cannot retrieve permissions", Success: false},
+											w, http.StatusInternalServerError)
 							return
 						}
 						for _, v := range groups.Groups {
 							if !v {
-								ResponseError(types.HttpMessage{Message: "cannot retrieve permissions", Success: false}, w, http.StatusForbidden)
+								ResponseError(types.HttpMessage{Message: "cannot retrieve permissions", Success: false},
+												w, http.StatusForbidden)
 								return
 							}
 						}
@@ -85,7 +109,8 @@ func GetSecurityMiddleware() (mux.MiddlewareFunc) {
 					return
 				}
 			}
-			ResponseError(types.HttpMessage{Message: "route " + cr + " not found", Success: false}, w, 500)
+			ResponseError(types.HttpMessage{Message: "route " + cr + " not found", Success: false},
+							w, http.StatusBadRequest)
 		})
 	}
 }

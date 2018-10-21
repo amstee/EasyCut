@@ -10,6 +10,7 @@ import (
 )
 
 type Permission struct {
+	MatchUser bool			`json:"match_user"`
 	Route string			`json:"route"`
 	Permissions []string	`json:"permissions"`
 }
@@ -23,6 +24,7 @@ type DataConfig struct {
 	Port int			`json:"port"`
 	Origins []string	`json:"origins"`
 	Security string		`json:"security"`
+	TPrefix string 		`json:"tprefix"`
 	Env	string			`json:"env"`
 	Api	string			`json:"api"`
 	Domain string		`json:"domain"`

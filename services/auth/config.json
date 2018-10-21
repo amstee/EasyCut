@@ -1,5 +1,6 @@
 {
   "port": 8080,
+  "tprefix": "auth0|",
   "origins": [
     "http://easy-cut.ovh",
     "https://easy-cut.ovh",

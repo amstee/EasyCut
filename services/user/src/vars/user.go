@@ -6,6 +6,11 @@ type AppMetadata struct {
 	}	`json:"authorization"`
 }
 
+type UserMetadata struct {
+	Address string 		`json:"address"`
+	Phone string 		`json:"phone"`
+}
+
 type UserCreation struct {
 	Connection	string 		`json:"connection"`
 	Email		string		`json:"email"`
@@ -13,6 +18,11 @@ type UserCreation struct {
 	EVerified	bool		`json:"email_verified"`
 	VerifyEmail	bool		`json:"verify_email"`
 	Metadata 	AppMetadata	`json:"app_metadata"`
+}
+
+type UserUpdate struct {
+	Email string				`json:"email"`
+	UserMetadata UserMetadata	`json:"user_metadata"`
 }
 
 type Identity struct {

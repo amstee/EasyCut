@@ -7,17 +7,30 @@
   ],
   "domain": "https://easy-cut.eu.auth0.com/",
   "api": "api/v2/",
+  "tprefix": "auth0|",
   "oauth": "oauth/token",
   "security": "http://auth:8080",
   "sfile": "/run/secrets/auth0_api",
   "routes": [
     {
+      "match_user": false,
       "route": "/status",
       "permissions": []
     },
     {
+      "match_user": false,
       "route": "/create",
       "permissions": []
+    },
+    {
+      "match_user": true,
+      "route": "/update.*",
+      "permissions": ["User"]
+    },
+    {
+      "match_user": false,
+      "route": "/get.*",
+      "permissions": ["User"]
     }
   ]
 }

@@ -41,7 +41,7 @@ func CheckTokenValidity(token *jwt.Token) (interface{}, error) {
 	return result, nil
 }
 
-func CheckScope(scope string, tokenString string) (bool) {
+func GetPermissionClaims(tokenString string) (*vars.PermissionClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &vars.PermissionClaims{}, func (token *jwt.Token) (interface{}, error) {
 		cert, err := GetCertificate(token)
 		if err != nil {
@@ -50,15 +50,27 @@ func CheckScope(scope string, tokenString string) (bool) {
 		result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
 		return result, nil
 	}); if err != nil {
-		fmt.Println("invalid token string for scope checking")
+		return nil, err
+	}
+	if token.Valid {
+		claims, ok := token.Claims.(*vars.PermissionClaims)
+		if ok {
+			return claims, nil
+		}
+		return nil, errors.New("unable to extract claims")
+	}
+	return nil, errors.New("invalid token")
+}
+
+func CheckScope(scope string, tokenString string) (bool) {
+	claims, err := GetPermissionClaims(tokenString); if err != nil {
+		fmt.Println(err)
 		return false
 	}
-	claims, ok := token.Claims.(*vars.PermissionClaims); if ok && token.Valid {
-		result := strings.Split(claims.Scope, " ")
-		for _, s := range result {
-			if s == scope {
-				return true
-			}
+	result := strings.Split(claims.Scope, " ")
+	for _, s := range result {
+		if s == scope {
+			return true
 		}
 	}
 	return false
