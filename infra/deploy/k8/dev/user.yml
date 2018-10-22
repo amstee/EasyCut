@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: dev
+  labels:
+    app: user
+spec:
+  selector:
+    app: user
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+    - name: http2
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+  namespace: dev
+  labels:
+    app: user
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+      - name: user
+        image: amstee/easy-cut-user:dev
+        ports:
+        - containerPort: 8080
+        env:
+          - name: API_CLIENT_ID
+            valueFrom:
+              configMapKeyRef:
+                name: auth0-api
+                key: id
+          - name: API_CLIENT_SECRET
+            valueFrom:
+              configMapKeyRef:
+                name: auth0-api
+                key: secret
