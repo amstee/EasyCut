@@ -27,9 +27,9 @@ It exposes five different endpoints for auth0 users management :
 
 * Server status : `GET /user/status`
 * Create user : `POST /user/create`
-* List users : `GET /user/list` **TODO**
-* Get a user info : `GET /user/<user_id>` **TODO**
-* Update user : `PUT /user/update` **TODO**
+* List users : `GET /user/list`
+* Get a user info : `GET /user/{user}`
+* Update user : `PUT /user/update/{user}`
 
 For more details about these endpoints check the [User service](user/README.md)
 

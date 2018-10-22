@@ -97,8 +97,33 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	common.ResponseJSON(result, w, resp.StatusCode)
 }
 
+func ListUsers(w http.ResponseWriter, r *http.Request) {
+	var search vars.Search
+	var result []vars.UserResponse
+	vals := r.URL.Query()
+
+	search.Build(vals)
+	token, err := auth0.GetToken(); if err != nil {
+		fmt.Println(err)
+		common.ResponseJSON(types.HttpMessage{Message: "unable to retrieve api token", Success: false},
+							w, http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(search.GetSearch())
+	resp, err := request.ExpectJson(config.Content.GetApi() + "users" + search.GetSearch(),
+		http.MethodGet, token.Format(), nil, &result)
+	if err != nil {
+		fmt.Println(err)
+		common.ResponseJSON(types.HttpMessage{Message: "unable to get users list", Success: false},
+			w, http.StatusInternalServerError)
+		return
+	}
+	common.ResponseJSON(result, w, resp.StatusCode)
+}
+
 func SetUserRoutes(router *mux.Router) {
 	router.HandleFunc("/create", CreateUser).Methods("POST")
+	router.HandleFunc("/list", ListUsers).Methods("GET")
 	router.HandleFunc("/update/{user}", UpdateUser).Methods("PUT")
-	router.HandleFunc("/get/{user}", GetUser).Methods("GET")
+	router.HandleFunc("/{user}", GetUser).Methods("GET")
 }
