@@ -2,7 +2,50 @@ version: '3.1'
 networks:
   services:
   proxy:
+  esnet:
+volumes:
+  data1:
+    driver: local
+  data2:
+    driver: local
 services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+    environment:
+      - cluster.name=easy-es-cluster
+#      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    deploy:
+      resources:
+        reservations:
+          memory: 500M
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data1:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+  elasticsearch2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+    environment:
+    - cluster.name=easy-es-cluster
+#    - bootstrap.memory_lock=true
+    - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    - "discovery.zen.ping.unicast.hosts=elasticsearch"
+    deploy:
+      resources:
+        reservations:
+          memory: 500M
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+    - data2:/usr/share/elasticsearch/data
+    networks:
+    - esnet
   nginx:
     image: nginx:1.15-alpine
     volumes:
@@ -16,9 +59,12 @@ services:
     depends_on:
       - auth
       - user
+      - elasticsearch
+      - elasticsearch2
     networks:
       - services
       - proxy
+      - esnet
   auth:
     image: "amstee/easy-cut-auth:${TAG}"
     deploy:
@@ -33,6 +79,7 @@ services:
       - auth
     networks:
       - services
+      - esnet
     environment:
       API_CLIENT_ID: "${API_CLIENT_ID}"
       API_CLIENT_SECRET: "${API_CLIENT_SECRET}"

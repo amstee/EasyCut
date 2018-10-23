@@ -112,6 +112,9 @@ This deployment is based on `docker swarm` allowing us to deploy, isolate and sc
 
 If you want to deploy your swarm cluster locally follow this tutorial : https://docs.docker.com/get-started/part4/
 
+If you run swarm on a vm, make sure to run the command below for elasticsearch :
+`sudo sysctl -w vm.max_map_count=262144`
+
 1. install docker
 2. install docker-compose
 3. Run `docker swarm init` on your master and read the output

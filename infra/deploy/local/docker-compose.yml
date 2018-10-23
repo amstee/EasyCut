@@ -25,4 +25,11 @@ services:
       - auth
     volumes:
       - ./secrets.json:/run/secrets/auth0_api
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+    container_name: "elastic"
+    environment:
+      - "discovery.type=single-node"
+    expose:
+      - 9200
 
