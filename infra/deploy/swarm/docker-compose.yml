@@ -50,6 +50,8 @@ services:
     image: nginx:1.15-alpine
     volumes:
       - "./nginx.conf:/etc/nginx/nginx.conf"
+      - "./cert.key:/etc/nginx/cert.key"
+      - "./cert.crt:/etc/nginx/cert.crt"
     ports:
       - 80:80
       - 443:443

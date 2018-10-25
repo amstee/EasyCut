@@ -23,7 +23,12 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /etc/nginx
+            - name: ssl-volume
+              mountPath: /etc/nginx
       volumes:
         - name: config-volume
           configMap:
             name: nginx-config
+        - name: ssl-volume
+          configMap:
+            name: ssl-cert

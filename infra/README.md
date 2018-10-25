@@ -73,11 +73,23 @@ Its a very lightweight environment.
 This deployment is based on `docker-compose` allowing us to deploy and make our services communicate easily.
 The environment **TAG** variable is necessary before running the services to indicate docker with image to use.
 
+**Deploy :**
+
 1. Install docker
 2. Install docker-compose
 3. Run the command `cd /infra/deploy/local && TAG=**WANTED PROJECT TAG** docker-compose up`
 4. Go to `http://localhost/auth/status` and check the service status
 
+The local deployment is quite easy to understand, each service is deployed once and the ingress traffic is 
+proxied by nginx. Each service is accessible with the url corresponding to its name :
+
+* User service : `localhost/user/`
+* Auth service : `localhost/auth/`
+* Elastic search (https only): `localhost/es/`
+* Nginx : `localhost`
+
+The elastic search service is running on port 9200 but only http trafic is forwarded to it cause the services
+that need to access elasticsearch can do it directly inside the docker environment.
 
 ### Swarm
 
@@ -90,6 +102,8 @@ If you want to deploy your swarm cluster locally follow this tutorial : https://
 
 If you run swarm on a vm, make sure to run the command below on each cluster node :
 `sudo sysctl -w vm.max_map_count=262144`
+
+**Deploy :**
 
 1. install docker
 2. install docker-compose
@@ -118,3 +132,10 @@ files inside our kubernetes cluster
 The `load-balancer.yml` file define our first load balancer service which direct the egress trafic to our nginx pods.
 
 Each EasyCut service has its corresponding service inside the k8 cluster allowing us to load balance the traffic and scale the pods.
+
+**Deploy :**
+
+1. Make sure your kubectl environment is setted to deploy on your cluster
+2. Run the command `TAG=**YOUR TAG** ./easy-cut.sh deploy k8`
+
+This command will first deploy the configuration to your k8 cluster, then it will deploy the services.
