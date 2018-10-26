@@ -4,6 +4,28 @@ services=( appointment auth barber rating salon user )
 k8conf=( "configmap/auth0.yml" "configmap/nginx.yml" "configmap/ssl.yml" )
 k8=( "auth.yml" "user.yml" "nginx.yml" "load-balancer.yml" )
 
+if [ $1 = "install" ]; then
+    go get github.com/gorilla/mux &
+    go get github.com/urfave/negroni &
+    go get github.com/rs/cors &
+    go get github.com/auth0/go-jwt-middleware &
+    go get github.com/spf13/viper &
+    go get github.com/dgrijalva/jwt-go &
+    go get github.com/olivere/elastic &
+    exit
+fi
+
+if [ $1 = "dependencies" ]; then
+    echo "github.com/gorilla/mux"
+    echo "github.com/urfave/negroni"
+    echo "github.com/rs/cors"
+    echo "github.com/auth0/go-jwt-middleware"
+    echo "github.com/spf13/viper"
+    echo "github.com/dgrijalva/jwt-go"
+    echo "github.com/olivere/elastic"
+    exit
+fi
+
 if [[ -z "${TAG}" ]]; then
     TAG="latest"
     echo "TAG not found in environment --> setting to default value : latest"
