@@ -52,7 +52,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				fmt.Println(err)
-				common.ResponseJSON(types.HttpMessage{Message: "unable to update user", Success: false}, w,
+				common.ResponseJSON(types.HttpMessage{Message: "unable to update user ", Success: false}, w,
 					http.StatusInternalServerError)
 				return
 			}

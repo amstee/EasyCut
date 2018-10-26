@@ -24,7 +24,7 @@ type UserCreation struct {
 }
 
 type UserUpdate struct {
-	Email string				`json:"email"`
+	Email string				`json:"email,omitempty"`
 	UserMetadata UserMetadata	`json:"user_metadata"`
 }
 
