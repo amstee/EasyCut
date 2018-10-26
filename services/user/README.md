@@ -54,6 +54,12 @@ Create a user in auth0
     "authorization": {
       "groups": ["User"]
     }
+  },
+  "user_metadata": {
+     "username": "amstee",
+     "address": "1st street of france",
+     "phone": "911",
+     "description": "Hey its me"    
   }
 }
 ```
@@ -106,6 +112,12 @@ Status code 201
                 "User"
             ]
         }
+    },
+    "user_metadata": {
+       "username": "amstee",
+       "address": "1st street of france",
+       "phone": "911",
+       "description": "Hey its me"    
     }
 }
 ```
@@ -156,7 +168,14 @@ at this url : [https://auth0.com/docs/api/management/v2#!/Users/post_users]()
         "authorization": {
             "groups": []
         }
+    },
+    "user_metadata": {
+       "username": "",
+       "address": "",
+       "phone": "",
+       "description": ""    
     }
+
 }
 ```
 
@@ -186,6 +205,12 @@ Status code 200
                 "User"
             ]
         }
+    },
+    "user_metadata": {
+       "username": "amstee",
+       "address": "1st street of france",
+       "phone": "911",
+       "description": "Hey its me"    
     }
 }
 ```
@@ -221,6 +246,9 @@ Check the status code
         "authorization": {
             "groups": []
         }
+    },
+    "user_metadata": {
+    
     }
 }
 ```
@@ -251,6 +279,12 @@ Status code 200
                 "User"
             ]
         }
+    },
+    "user_metadata": {
+       "username": "amstee",
+       "address": "1st street of france",
+       "phone": "911",
+       "description": "Hey its me"    
     }
 }
 ```
@@ -268,7 +302,8 @@ Status code 200
 {
   "email": "jer*",
   "nickname": "jer*",
-  "group": "Barber"
+  "group": "Barber",
+  "username": "ams*"
 }
 ```
 
@@ -315,6 +350,12 @@ Status code 200
                     "User"
                 ]
             }
+        },
+        "user_metadata": {
+           "username": "amstee",
+           "address": "1st street of france",
+           "phone": "911",
+           "description": "Hey its me"    
         }
     }
 ]

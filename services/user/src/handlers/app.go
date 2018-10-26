@@ -13,7 +13,7 @@ import (
 )
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	var result vars.UserResponse
+	var result vars.User
 	v := mux.Vars(r)
 
 	if userId, ok := v["user"]; ok {
@@ -38,7 +38,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var user vars.UserUpdate
-	var result vars.UserResponse
+	var result vars.User
 	v := mux.Vars(r)
 
 	if userId, ok := v["user"]; ok {
@@ -72,7 +72,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user vars.UserCreation
-	var result vars.UserResponse
+	var result vars.User
 	token, err := auth0.GetToken(); if err != nil {
 		fmt.Println(err)
 		common.ResponseJSON(types.HttpMessage{Message: "unable to retrieve api token", Success: false},
@@ -99,7 +99,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func ListUsers(w http.ResponseWriter, r *http.Request) {
 	var search vars.Search
-	var result []vars.UserResponse
+	var result []vars.User
 	vals := r.URL.Query()
 
 	search.Build(vals)

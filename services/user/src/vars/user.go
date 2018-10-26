@@ -7,8 +7,10 @@ type AppMetadata struct {
 }
 
 type UserMetadata struct {
+	Username string 	`json:"username"`
 	Address string 		`json:"address"`
 	Phone string 		`json:"phone"`
+	Description string 	`json:"description"`
 }
 
 type UserCreation struct {
@@ -18,6 +20,7 @@ type UserCreation struct {
 	EVerified	bool		`json:"email_verified"`
 	VerifyEmail	bool		`json:"verify_email"`
 	Metadata 	AppMetadata	`json:"app_metadata"`
+	UserMetadata UserMetadata `json:"user_metadata"`
 }
 
 type UserUpdate struct {
@@ -32,13 +35,15 @@ type Identity struct {
 	Social bool 			`json:"isSocial"`
 }
 
-type UserResponse struct {
-	Email string			`json:"email"`
-	EmailVerified bool		`json:"email_verified"`
-	Updated string			`json:"updated_at"`
-	Created string 			`json:"created_at"`
-	Picture string 			`json:"picture"`
-	UserId string 			`json:"user_id"`
-	Identities []Identity	`json:"identities"`
-	Metadata AppMetadata	`json:"app_metadata"`
+type User struct {
+	Email string				`json:"email"`
+	EmailVerified bool			`json:"email_verified"`
+	Updated string				`json:"updated_at"`
+	Created string 				`json:"created_at"`
+	Picture string 				`json:"picture"`
+	UserId string 				`json:"user_id"`
+	LastLogin string 			`json:"last_login"`
+	Identities []Identity		`json:"identities"`
+	Metadata AppMetadata		`json:"app_metadata"`
+	UserMetadata UserMetadata	`json:"user_metadata"`
 }
