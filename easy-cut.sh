@@ -4,6 +4,20 @@ services=( appointment auth barber rating salon user )
 k8conf=( "configmap/auth0.yml" "configmap/nginx.yml" "configmap/ssl.yml" )
 k8=( "auth.yml" "user.yml" "nginx.yml" "load-balancer.yml" )
 
+if [[ -z "${1}" ]] || [ $1 = "--help" ]; then
+    echo -e "Commands :"
+    echo -e "1. install\t --> install go dependencies"
+    echo -e "2. dependencies\t --> display go dependencies"
+    echo -e "3. deploy\t --> Deploy the project on the specified platform"
+    echo -e "  3.1 deploy local\t --> deploy the project locally"
+    echo -e "  3.2 deploy swarm\t --> deploy the project on your swarm cluster"
+    echo -e "  3.3 deploy k8   \t --> deploy the project on your kubernetes cluster"
+    echo -e "4. clean\t --> clean the services build"
+    echo -e "5. release\t --> build the services"
+    echo -e "6. build\t --> build the docker images corresponding to the services"
+    exit
+fi
+
 if [ $1 = "install" ]; then
     go get github.com/gorilla/mux &
     go get github.com/urfave/negroni &
