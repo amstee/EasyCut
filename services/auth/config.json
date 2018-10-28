@@ -1,4 +1,5 @@
 {
+  "name": "auth",
   "port": 8080,
   "tprefix": "auth0|",
   "origins": [

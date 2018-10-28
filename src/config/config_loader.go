@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"encoding/json"
+	"github.com/pkg/errors"
 )
 
 type Permission struct {
@@ -21,6 +22,7 @@ type Secrets struct {
 }
 
 type DataConfig struct {
+	Name string 		`json:"name"`
 	Port int			`json:"port"`
 	Origins []string	`json:"origins"`
 	Security string		`json:"security"`
@@ -124,6 +126,9 @@ func (c *DataConfig) LoadConfig() (error) {
 	}
 	if err := viper.Unmarshal(c); err != nil {
 		return err
+	}
+	if c.Name == "" {
+		return errors.New("Service name not specified")
 	}
 	if err := c.LoadSecrets(); err != nil {
 		return err

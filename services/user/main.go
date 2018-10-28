@@ -5,12 +5,12 @@ import (
 	"os"
 	"github.com/gorilla/mux"
 	"github.com/urfave/negroni"
-	"strconv"
 	"github.com/amstee/easy-cut/src/config"
 	"github.com/rs/cors"
 	"github.com/amstee/easy-cut/services/user/src/handlers"
 	"github.com/amstee/easy-cut/src/middlewares"
 	"github.com/amstee/easy-cut/src/auth0"
+	"github.com/amstee/easy-cut/src/common"
 )
 
 func initialize(router *mux.Router, secureRoutes mux.MiddlewareFunc) *negroni.Negroni {
@@ -28,11 +28,6 @@ func initialize(router *mux.Router, secureRoutes mux.MiddlewareFunc) *negroni.Ne
 	return n
 }
 
-func run(service *negroni.Negroni) {
-	fmt.Printf("Starting User Service on port %d\n", config.Content.Port)
-	service.Run(":" + strconv.Itoa(config.Content.Port))
-}
-
 func main() {
 	if err := config.Content.LoadConfig(); err != nil {
 		fmt.Println(err)
@@ -46,5 +41,5 @@ func main() {
 	router := mux.NewRouter()
 	secureRoutes := middlewares.GetSecurityMiddleware()
 	service := initialize(router, secureRoutes)
-	run(service)
+	common.Run(service)
 }

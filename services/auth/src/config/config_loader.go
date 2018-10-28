@@ -8,6 +8,7 @@ import (
 )
 
 type DataConfig struct {
+	Name 	string 		`json:"name"`
 	Port 	int			`json:"port"`
 	Origins []string	`json:"origins"`
 	Jwks 	string		`json:"jwks"`
@@ -45,6 +46,7 @@ func (c *DataConfig) LoadEnv() (error) {
 func (c *DataConfig) LoadConfig() (error) {
 	viper.SetConfigFile("config.json")
 	viper.AddConfigPath(".")
+	viper.SetDefault("name", "auth")
 	viper.SetDefault("port", "8080")
 	viper.SetDefault("tprefix", "auth0|")
 	viper.SetDefault("jwks", "https://easy-cut.eu.auth0.com/.well-known/jwks.json")

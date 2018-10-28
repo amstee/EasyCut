@@ -1,5 +1,5 @@
 {
-  "name": "user",
+  "name": "barber",
   "port": 8080,
   "origins": [
     "http://easy-cut.ovh",
@@ -19,23 +19,8 @@
       "permissions": []
     },
     {
-      "match_user": false,
-      "route": "/create",
-      "permissions": []
-    },
-    {
       "match_user": true,
-      "route": "/update.*",
-      "permissions": ["User"]
-    },
-    {
-      "match_user": false,
-      "route": "/get.*",
-      "permissions": ["User"]
-    },
-    {
-      "match_user": false,
-      "route": "/list",
+      "route": "/create",
       "permissions": ["User"]
     }
   ]
