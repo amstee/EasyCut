@@ -73,6 +73,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user vars.UserCreation
 	var result vars.User
+
 	token, err := auth0.GetToken(); if err != nil {
 		fmt.Println(err)
 		common.ResponseJSON(types.HttpMessage{Message: "unable to retrieve api token", Success: false},
@@ -87,7 +88,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Connection = "Username-Password-Authentication"
-	resp, err := request.ExpectJson(config.Content.GetApi() + "users", http.MethodPost, token.Format(), user,  &result)
+	resp, err := request.ExpectJson(config.GetApi() + "users", http.MethodPost, token.Format(), user,  &result)
 	if err != nil {
 		fmt.Println(err)
 		common.ResponseJSON(types.HttpMessage{Message: "unable to create user", Success: false},

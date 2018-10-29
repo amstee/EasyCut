@@ -10,7 +10,20 @@
   "api": "api/v2/",
   "tprefix": "auth0|",
   "oauth": "oauth/token",
-  "security": "http://auth:8080",
+  "services": [
+    {
+      "name": "security",
+      "url": "http://auth:8080"
+    },
+    {
+      "name": "user",
+      "url": "http://user:8080"
+    },
+    {
+      "name": "elasticsearch",
+      "url": "http://elasticsearch:9200"
+    }
+  ],
   "sfile": "/run/secrets/auth0_api",
   "routes": [
     {
@@ -20,8 +33,27 @@
     },
     {
       "match_user": true,
-      "route": "/create",
+      "route": "/create.*",
       "permissions": ["User"]
+    },
+    {
+      "match_user": true,
+      "route": "/update.*",
+      "permissions": ["User", "Barber"]
+    },
+    {
+      "match_user": false,
+      "route": "/get.*",
+      "permissions": [
+        "User"
+      ]
+    },
+    {
+      "match_user": false,
+      "route": "/list",
+      "permissions": [
+        "User"
+      ]
     }
   ]
 }

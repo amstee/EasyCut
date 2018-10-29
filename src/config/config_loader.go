@@ -21,11 +21,14 @@ type Secrets struct {
 	ClientSecret string	`json:"client_secret"`
 }
 
+type Service struct {
+	Name string 		`json:"name"`
+	Url string 			`json:"url"`
+}
+
 type DataConfig struct {
 	Name string 		`json:"name"`
 	Port int			`json:"port"`
-	Origins []string	`json:"origins"`
-	Security string		`json:"security"`
 	TPrefix string 		`json:"tprefix"`
 	Env	string			`json:"env"`
 	Api	string			`json:"api"`
@@ -34,38 +37,73 @@ type DataConfig struct {
 	Sfile string		`json:"sfile"`
 	ClientId string		`json:"client_id"`
 	ClientSecret string	`json:"client_secret"`
+	Origins []string	`json:"origins"`
+	Services []Service 	`json:"services"`
 	Routes []Permission	`json:"routes"`
+}
+
+func GetApi() string {
+	return Content.GetApi()
 }
 
 func (c *DataConfig) GetApi() string {
 	return c.Domain + c.Api
 }
 
+func Display() {
+	Content.Display()
+}
+
 func (c *DataConfig) Display() {
-	fmt.Println("Running with config : ")
-	fmt.Printf("Port: %d\n", c.Port)
-	fmt.Println("Origins: ")
-	for _, o := range c.Origins {
-		fmt.Println(o)
+	e := false
+	fmt.Println("_________CONFIGURATION_________")
+	fmt.Println("Service -------- " + c.Name + " --------")
+	fmt.Printf("\tPort =\t\t%d\n", c.Port)
+	fmt.Printf("\tEnvironment =\t%s\n", c.Env)
+	fmt.Println("Auth0 configuration :")
+	fmt.Printf("\tApi url =\t%s\n", c.Api)
+	fmt.Printf("\tBearer prefix =\t%s\n", c.TPrefix)
+	fmt.Printf("\tOauth url =\t%s\n", c.Oauth)
+	fmt.Printf("\tDomain url =\t%s\n", c.Domain)
+	fmt.Println("CORS :")
+	for i, o := range c.Origins {
+		fmt.Printf("\tOrigin %d is %s\n", i, o)
 	}
-	fmt.Println("PermMatcher : ")
-	for _, perm := range c.Routes {
-		fmt.Println("Route : " + perm.Route)
-		for _, v := range perm.Permissions {
-			fmt.Println(v)
+	fmt.Println("Services :")
+	for _, s := range c.Services {
+		fmt.Printf("\tService : %s\t--> %s\n", s.Name, s.Url)
+	}
+	fmt.Println("Routes :")
+	for _, r := range c.Routes {
+		fmt.Printf("\tRoute : %s\n", r.Route)
+		e = false
+		for _, p := range r.Permissions {
+			fmt.Printf("\t\tRequired role --> %s\n", p)
+			e = true
+		}
+		if !e {
+			fmt.Println("\t\tNo permissions needed")
 		}
 	}
-	fmt.Println("Security url: " + c.Security)
-	fmt.Println("Env: " + c.Env)
-	fmt.Println("Domain " + c.Domain)
-	fmt.Println("Oauth " + c.Oauth)
-	fmt.Println("Api "+ c.Api)
+	fmt.Println("_________CONFIGURATION_________")
+}
+
+func GetServiceURL(name string) string {
+	for _, s := range Content.Services {
+		if s.Name == name {
+			return s.Url
+		}
+	}
+	return ""
+}
+
+func LoadSecrets() (error) {
+	return Content.LoadSecrets()
 }
 
 func (c *DataConfig) LoadSecrets() (error) {
-	fmt.Println("Trying to open secrets file : " + c.Sfile)
 	jsonFile, err := os.Open(c.Sfile); if err != nil {
-		fmt.Println("unable to open secrets file")
+		fmt.Println("## WARNING ## secrets file not found, make sure env variables are set")
 		return nil
 	}
 	defer jsonFile.Close()
@@ -85,6 +123,10 @@ func (c *DataConfig) LoadSecrets() (error) {
 	return nil
 }
 
+func LoadEnv() (error) {
+	return Content.LoadEnv()
+}
+
 func (c *DataConfig) LoadEnv() (error) {
 	if port := os.Getenv("EASY_CUT_PORT"); port != "" {
 		p, err := strconv.Atoi(port); if err != nil {
@@ -93,7 +135,10 @@ func (c *DataConfig) LoadEnv() (error) {
 		c.Port = p
 	}
 	if security := os.Getenv("AUTH_URL"); security != "" {
-		c.Security = security
+		c.Services = append(c.Services, Service{Name: "security", Url: security})
+	}
+	if user := os.Getenv("USER_URL"); user != "" {
+		c.Services = append(c.Services, Service{Name: "user", Url: user})
 	}
 	if env := os.Getenv("EASY_CUT_ENV"); env != "" {
 		c.Env = env
@@ -111,6 +156,10 @@ func (c *DataConfig) LoadEnv() (error) {
 	return nil
 }
 
+func Load() (error) {
+	return Content.LoadConfig()
+}
+
 func (c *DataConfig) LoadConfig() (error) {
 	viper.SetConfigFile("config.json")
 	viper.AddConfigPath(".")
@@ -118,7 +167,6 @@ func (c *DataConfig) LoadConfig() (error) {
 	viper.SetDefault("domain", "https://easy-cut.eu.auth0.com/")
 	viper.SetDefault("sfile", "/run/secrets/auth0_api")
 	viper.SetDefault("api", "api/v2")
-	viper.SetDefault("security", "http://auth:8080")
 	viper.SetDefault("oauth", "oauth/token")
 	viper.SetDefault("env", "dev")
 	if err := viper.ReadInConfig(); err != nil {

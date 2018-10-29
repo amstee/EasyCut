@@ -7,6 +7,7 @@ import (
 	"errors"
 	"bytes"
 	"fmt"
+	"github.com/amstee/easy-cut/src/types"
 )
 
 func JsonToReader(data interface{}) (*bytes.Buffer, error) {
@@ -27,6 +28,11 @@ func GetBearer(r *http.Request) (string, error) {
 		return tokenString,  nil
 	}
 	return "", errors.New("invalided identifier found")
+}
+
+func ResponseError(message string, err error, w http.ResponseWriter, statusCode int) {
+	fmt.Println(err.Error())
+	ResponseJSON(types.HttpMessage{Message: message + " : " + err.Error(), Success: false}, w, statusCode)
 }
 
 func ResponseJSON(data interface{}, w http.ResponseWriter, statusCode int) {

@@ -10,7 +10,10 @@
   "api": "api/v2/",
   "tprefix": "auth0|",
   "oauth": "oauth/token",
-  "security": "http://auth:8080",
+  "services": [{
+    "name": "security",
+    "url": "http://auth:8080"
+  }],
   "sfile": "/run/secrets/auth0_api",
   "routes": [
     {

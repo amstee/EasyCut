@@ -31,6 +31,9 @@ func LoadToken() (error) {
 	}
 	req.Header.Add("content-type", "application/json")
 	res, _ := http.DefaultClient.Do(req)
+	if res == nil {
+		return errors.New("unable to execute http request, check your internet connection")
+	}
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {

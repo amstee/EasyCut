@@ -38,7 +38,7 @@ func RequestGroups(token string, permissions GroupsQuery, complement string) (*G
 	jsonData, err := json.Marshal(permissions); if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", config.Content.Security + "/secure/groups" + complement,
+	req, err := http.NewRequest("POST", config.GetServiceURL("security") + "/secure/groups" + complement,
 								bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, err

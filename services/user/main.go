@@ -34,7 +34,7 @@ func main() {
 		os.Exit(1)
 	}
 	if err := auth0.LoadToken(); err != nil {
-		fmt.Println("Auth0", err)
+		fmt.Println("Auth0 error : ", err)
 		os.Exit(1)
 	}
 	config.Content.Display()
