@@ -18,9 +18,10 @@ type User struct {
 }
 
 type Barber struct {
-	UserId string 			`json:"user_id"`
 	Experience string 		`json:"experience,omitempty"`
 	Style string 			`json:"style,omitempty"`
+	Created string 			`json:"created,omitempty"`
+	Updated string 			`json:"updated,omitempty"`
 }
 
 type BarberResponse struct {

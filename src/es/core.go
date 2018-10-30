@@ -4,43 +4,50 @@ import (
 	"github.com/olivere/elastic"
 	"github.com/amstee/easy-cut/src/config"
 	"context"
-	"fmt"
+	"github.com/amstee/easy-cut/src/logger"
 )
 
-func IndexExist(name string) (bool, error) {
-	return Client.IndexExists(name).Do(Ctx)
-}
+type setter func() error
 
-func RegisterIndex(name string, mapping string) error {
-	exist, err := IndexExist(name); if err != nil {
-		return err
-	}
-	if exist {
-		return nil
-	}
-	createIndex, err := Client.CreateIndex(name).BodyString(mapping).Do(Ctx)
+func Flush(index string) error {
+	_, err := Client.Flush().Index(index).Do(Ctx)
 	if err != nil {
 		return err
 	}
-	if !createIndex.Acknowledged {
-		fmt.Println("index not acknowledged")
-	}
 	return nil
+}
+
+func CheckESService() bool {
+	if connected == false {
+		InitClient(nil)
+	}
+	return connected
 }
 
 func GetVersion() (string, error) {
 	return Client.ElasticsearchVersion(config.GetServiceURL("elasticsearch"))
 }
 
-func InitClient() error {
+func InitClient(callable func() error) error {
 	var err error
 
+	if callable != nil {
+		call = callable
+	}
 	Client, err = elastic.NewClient(elastic.SetURL(config.GetServiceURL("elasticsearch")))
 	if err != nil {
+		logger.Error.Println("Elastic search connection failed")
 		return err
 	}
-	return nil
+	logger.Error.Println("Elastic search connection success")
+	connected = true
+	if call == nil {
+		return nil
+	}
+	return call()
 }
 
+var call setter = nil
+var connected = false
 var Ctx = context.Background()
 var Client *elastic.Client = nil

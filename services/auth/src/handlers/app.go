@@ -13,17 +13,13 @@ import (
 
 func CheckToken(w http.ResponseWriter, r *http.Request) {
 	tokenString, err := common.GetBearer(r); if err != nil {
-		common.ResponseJSON(types.HttpMessage{Message: err.Error(), Success: false}, w,  http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to retrieve token", err, w, http.StatusInternalServerError); return
 	}
-
 	token, err := jwt.Parse(tokenString, core.CheckTokenValidity); if err != nil {
-		common.ResponseJSON(types.HttpMessage{Message: "unable to parse jwt " + err.Error(), Success: false}, w, http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to pars jwt", err, w, http.StatusInternalServerError); return
 	}
 	_, err = core.CheckTokenValidity(token); if err != nil {
-		common.ResponseJSON(types.HttpMessage{Message: "token is invalid", Success: false}, w, http.StatusInternalServerError)
-		return
+		common.ResponseError("invalid token", err, w, http.StatusBadRequest); return
 	}
 	common.ResponseJSON(types.HttpMessage{Message: "token is valid", Success: true}, w, 200)
 }
@@ -33,16 +29,13 @@ func Groups(w http.ResponseWriter, r *http.Request) {
 	var resp *vars.GroupsResponse
 
 	token, err := common.GetBearer(r); if err != nil {
-		common.ResponseJSON(types.HttpMessage{Message: err.Error(), Success: false}, w, http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to retrieve token", err, w, http.StatusInternalServerError); return
 	}
 	err = common.DecodeJSON(&groups, r); if err != nil {
-		common.ResponseJSON(types.HttpMessage{Message: "unable to decode json body", Success: false}, w, http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to decode body", err, w, http.StatusBadRequest); return
 	}
 	resp, err = core.CheckGroups(groups.Groups, token); if err != nil {
-		common.ResponseJSON(types.HttpMessage{Message: "unable to check user groups", Success: false}, w, http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to check user groups", err, w, http.StatusInternalServerError); return
 	}
 	common.ResponseJSON(resp, w, 200)
 }
@@ -54,29 +47,23 @@ func GroupsAndMatch(w http.ResponseWriter, r *http.Request) {
 
 	if userId, ok := v["user"]; ok {
 		tokenString, err := common.GetBearer(r); if err != nil {
-			common.ResponseJSON(types.HttpMessage{Message: err.Error(), Success: false}, w,  http.StatusInternalServerError)
-			return
+			common.ResponseError("unable to retrieve token", err, w, http.StatusInternalServerError); return
 		}
 		claims, err := core.GetPermissionClaims(tokenString); if err != nil {
-			common.ResponseJSON(types.HttpMessage{Message: "invalid token : " + err.Error(), Success: false}, w,  http.StatusBadRequest)
-			return
+			common.ResponseError("invalid token", err, w, http.StatusBadRequest); return
 		}
 		err = common.DecodeJSON(&groups, r); if err != nil {
-			common.ResponseJSON(types.HttpMessage{Message: "unable to decode json body", Success: false}, w, http.StatusInternalServerError)
-			return
+			common.ResponseError("unable to decode json body", err, w, http.StatusBadRequest); return
 		}
 		if claims.Subject == (config.Content.TPrefix + userId) {
 			resp, err = core.CheckGroups(groups.Groups, tokenString); if err != nil {
-				common.ResponseJSON(types.HttpMessage{Message: "unable to check user groups", Success: false}, w, http.StatusInternalServerError)
-				return
+				common.ResponseError("unable to check user groups", err, w, http.StatusInternalServerError); return
 			}
-			common.ResponseJSON(resp, w, 200)
-			return
+			common.ResponseJSON(resp, w, 200); return
 		}
-		common.ResponseJSON(types.HttpMessage{Message: "Forbidden access", Success: false}, w,  http.StatusForbidden)
-		return
+		common.ResponseError("unable to update user", nil, w, http.StatusForbidden); return
 	}
-	common.ResponseJSON(types.HttpMessage{Message: "user not found in request", Success: false}, w,  http.StatusBadRequest)
+	common.ResponseError("user not found", nil, w, http.StatusBadRequest)
 }
 
 func Permissions(w http.ResponseWriter, r *http.Request) {
@@ -85,13 +72,11 @@ func Permissions(w http.ResponseWriter, r *http.Request) {
 	var isAllowed bool
 
 	token, err := common.GetBearer(r); if err != nil {
-		common.ResponseJSON(types.HttpMessage{Message: err.Error(), Success: false}, w,  http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to retrieve token", err, w, http.StatusBadRequest); return
 	}
 
 	err = common.DecodeJSON(&perms, r); if err != nil {
-		common.ResponseJSON(types.HttpMessage{Message: "unable to decode json body", Success: false}, w, http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to decode body", err, w, http.StatusBadRequest); return
 	}
 	for _, scope := range perms.Scopes {
 		isAllowed = core.CheckScope(scope, token)

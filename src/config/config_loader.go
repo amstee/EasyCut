@@ -27,6 +27,7 @@ type Service struct {
 }
 
 type DataConfig struct {
+	Auth0 bool 			`json:"auth0"`
 	Name string 		`json:"name"`
 	Port int			`json:"port"`
 	TPrefix string 		`json:"tprefix"`
@@ -143,15 +144,17 @@ func (c *DataConfig) LoadEnv() (error) {
 	if env := os.Getenv("EASY_CUT_ENV"); env != "" {
 		c.Env = env
 	}
-	if clientId := os.Getenv("API_CLIENT_ID"); clientId != "" {
-		c.ClientId = clientId
-	} else {
-		fmt.Println("Warning : API_CLIENT_ID not set in environment")
-	}
-	if clientSecret := os.Getenv("API_CLIENT_SECRET"); clientSecret != "" {
-		c.ClientSecret = clientSecret
-	} else {
-		fmt.Println("Warning : API_CLIENT_SECRET not set in environment")
+	if c.Auth0 {
+		if clientId := os.Getenv("API_CLIENT_ID"); clientId != "" {
+			c.ClientId = clientId
+		} else {
+			fmt.Println("Warning : API_CLIENT_ID not set in environment")
+		}
+		if clientSecret := os.Getenv("API_CLIENT_SECRET"); clientSecret != "" {
+			c.ClientSecret = clientSecret
+		} else {
+			fmt.Println("Warning : API_CLIENT_SECRET not set in environment")
+		}
 	}
 	return nil
 }
@@ -168,6 +171,7 @@ func (c *DataConfig) LoadConfig() (error) {
 	viper.SetDefault("sfile", "/run/secrets/auth0_api")
 	viper.SetDefault("api", "api/v2")
 	viper.SetDefault("oauth", "oauth/token")
+	viper.SetDefault("auth0", false)
 	viper.SetDefault("env", "dev")
 	if err := viper.ReadInConfig(); err != nil {
 		return err
@@ -178,8 +182,10 @@ func (c *DataConfig) LoadConfig() (error) {
 	if c.Name == "" {
 		return errors.New("Service name not specified")
 	}
-	if err := c.LoadSecrets(); err != nil {
-		return err
+	if c.Auth0 {
+		if err := c.LoadSecrets(); err != nil {
+			return err
+		}
 	}
 	return c.LoadEnv()
 }

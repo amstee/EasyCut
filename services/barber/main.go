@@ -10,7 +10,6 @@ import (
 	"github.com/urfave/negroni"
 	"github.com/rs/cors"
 	"github.com/amstee/easy-cut/services/barber/src/handlers"
-	"github.com/amstee/easy-cut/src/auth0"
 	"github.com/amstee/easy-cut/src/es"
 	"github.com/amstee/easy-cut/services/barber/src/vars"
 )
@@ -31,21 +30,15 @@ func initalize(router *mux.Router, secureRoutes mux.MiddlewareFunc) *negroni.Neg
 }
 
 func initES() {
-	if err := es.InitClient(); err != nil {
+	if err := es.InitClient(vars.Register); err != nil {
 		fmt.Println("Es : ", err)
-		os.Exit(1)
+		return
 	} else {
-		res, err := es.GetVersion();
+		res, err := es.GetVersion()
 		if err != nil {
-			fmt.Println("Es : ", err)
-			os.Exit(1)
+			fmt.Println("Es version : ", err)
 		}
 		fmt.Println("Elastic search version --> ", res)
-		err = vars.Register()
-		if err != nil {
-			fmt.Println("Es : ", err)
-			os.Exit(1)
-		}
 	}
 }
 
@@ -55,10 +48,6 @@ func main() {
 		os.Exit(1)
 	}
 	config.Display()
-	if err := auth0.LoadToken(); err != nil {
-		fmt.Println("Auth0", err)
-		os.Exit(1)
-	}
 	initES()
 	router := mux.NewRouter()
 	secureRoutes := middlewares.GetSecurityMiddleware()

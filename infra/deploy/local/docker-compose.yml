@@ -10,6 +10,11 @@ services:
     ports:
       - 80:80
       - 443:443
+    depends_on:
+      - auth
+      - user
+      - barber
+      - elasticsearch
   auth:
     image: "amstee/easy-cut-auth:${TAG}"
     container_name: "auth"
@@ -25,11 +30,19 @@ services:
       API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
     links:
       - auth
+  barber:
+    image: "amstee/easy-cut-barber:${TAG}"
+    container_name: "barber"
+    expose:
+    - 8080
+    depends_on:
+    - elasticsearch
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
     container_name: "elastic"
     environment:
       - "discovery.type=single-node"
+      - "network.host=0.0.0.0"
     expose:
       - 9200
 

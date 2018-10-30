@@ -11,9 +11,6 @@ const BarberMapping = `
 		"mappings": {
 			"barber": {
 				"properties": {
-					"user_id": {
-						"type": "keyword"
-					},
 					"experience": {
 						"type": "keyword"
 					},
@@ -33,5 +30,5 @@ const BarberMapping = `
 `
 
 func Register() error {
-	return es.RegisterIndex("EasyCut", BarberMapping)
+	return es.RegisterIndex("easy_cut", BarberMapping)
 }

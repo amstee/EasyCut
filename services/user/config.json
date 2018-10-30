@@ -6,6 +6,7 @@
     "https://easy-cut.ovh",
     "http://localhost"
   ],
+  "auth0": true,
   "domain": "https://easy-cut.eu.auth0.com/",
   "api": "api/v2/",
   "tprefix": "auth0|",

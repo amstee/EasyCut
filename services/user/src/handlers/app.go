@@ -4,7 +4,6 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"github.com/amstee/easy-cut/services/user/src/vars"
-	"github.com/amstee/easy-cut/src/types"
 	"github.com/amstee/easy-cut/src/request"
 	"github.com/amstee/easy-cut/src/config"
 	"fmt"
@@ -17,23 +16,17 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	v := mux.Vars(r)
 
 	if userId, ok := v["user"]; ok {
-		if token, err := auth0.GetToken(); err == nil {
+		token, err := auth0.GetToken(); if err == nil {
 			resp, err := request.ExpectJson(config.Content.GetApi() + "users/" + config.Content.TPrefix + userId,
 											http.MethodGet, token.Format(), nil, &result)
 			if err == nil && resp.StatusCode == 200 {
-				common.ResponseJSON(result, w, http.StatusOK)
-				return
+				common.ResponseJSON(result, w, http.StatusOK); return
 			}
-			common.ResponseJSON(types.HttpMessage{Message: "unable to get user " + userId, Success: false},
-								w, http.StatusExpectationFailed)
-			return
+			common.ResponseError("unable to update user " + userId, err, w, http.StatusExpectationFailed); return
 		}
-		common.ResponseJSON(types.HttpMessage{Message: "unable to retrieve api token", Success: false},
-							w, http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to retrieve api token", err, w, http.StatusInternalServerError); return
 	}
-	common.ResponseJSON(types.HttpMessage{Message: "user not found in url", Success: false},
-						w, http.StatusBadRequest)
+	common.ResponseError("user not found in url", nil, w, http.StatusInternalServerError)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -48,26 +41,15 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 				resp, err := request.ExpectJson(config.Content.GetApi() + "users/" + config.Content.TPrefix + userId,
 												http.MethodPatch, token.Format(), user, &result)
 				if err == nil && resp.StatusCode == http.StatusOK {
-					common.ResponseJSON(result, w, http.StatusOK)
-					return
+					common.ResponseJSON(result, w, http.StatusOK); return
 				}
-				fmt.Println(err)
-				common.ResponseJSON(types.HttpMessage{Message: "unable to update user ", Success: false}, w,
-					http.StatusInternalServerError)
-				return
+				common.ResponseError("unable to update user", err, w, http.StatusInternalServerError); return
 			}
-			fmt.Println(err)
-			common.ResponseJSON(types.HttpMessage{Message: "unable to retrieve user data", Success: false},
-				w, http.StatusBadRequest)
-			return
+			common.ResponseError("unable to retrieve user data", err, w, http.StatusBadRequest); return
 		}
-		fmt.Println(err)
-		common.ResponseJSON(types.HttpMessage{Message: "unable to retrieve api token", Success: false},
-			w, http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to retrieve api token", err, w, http.StatusInternalServerError); return
 	}
-	common.ResponseJSON(types.HttpMessage{Message: "user not found in url", Success: false},
-						w, http.StatusBadRequest)
+	common.ResponseError("unable to update user", nil, w, http.StatusBadRequest); return
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -75,25 +57,15 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var result vars.User
 
 	token, err := auth0.GetToken(); if err != nil {
-		fmt.Println(err)
-		common.ResponseJSON(types.HttpMessage{Message: "unable to retrieve api token", Success: false},
-							w, http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to retrieve api token", err, w, http.StatusInternalServerError); return
 	}
-
 	if err := common.DecodeJSON(&user, r); err != nil {
-		fmt.Println(err)
-		common.ResponseJSON(types.HttpMessage{Message: "unable to decode body", Success: false},
-							w, http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to decode body", err, w, http.StatusBadRequest); return
 	}
 	user.Connection = "Username-Password-Authentication"
 	resp, err := request.ExpectJson(config.GetApi() + "users", http.MethodPost, token.Format(), user,  &result)
 	if err != nil {
-		fmt.Println(err)
-		common.ResponseJSON(types.HttpMessage{Message: "unable to create user", Success: false},
-							w, http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to create user", err, w, http.StatusInternalServerError); return
 	}
 	common.ResponseJSON(result, w, resp.StatusCode)
 }
@@ -105,19 +77,13 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 
 	search.Build(vals)
 	token, err := auth0.GetToken(); if err != nil {
-		fmt.Println(err)
-		common.ResponseJSON(types.HttpMessage{Message: "unable to retrieve api token", Success: false},
-							w, http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to retrieve api token", err, w, http.StatusInternalServerError); return
 	}
 	fmt.Println(search.GetSearch())
 	resp, err := request.ExpectJson(config.Content.GetApi() + "users" + search.GetSearch(),
 		http.MethodGet, token.Format(), nil, &result)
 	if err != nil {
-		fmt.Println(err)
-		common.ResponseJSON(types.HttpMessage{Message: "unable to get users list", Success: false},
-			w, http.StatusInternalServerError)
-		return
+		common.ResponseError("unable to get user list", err, w, http.StatusInternalServerError); return
 	}
 	common.ResponseJSON(result, w, resp.StatusCode)
 }

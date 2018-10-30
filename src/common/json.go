@@ -7,6 +7,7 @@ import (
 	"errors"
 	"bytes"
 	"fmt"
+	"github.com/amstee/easy-cut/src/logger"
 	"github.com/amstee/easy-cut/src/types"
 )
 
@@ -31,8 +32,13 @@ func GetBearer(r *http.Request) (string, error) {
 }
 
 func ResponseError(message string, err error, w http.ResponseWriter, statusCode int) {
-	fmt.Println(err.Error())
-	ResponseJSON(types.HttpMessage{Message: message + " : " + err.Error(), Success: false}, w, statusCode)
+	if err != nil {
+		logger.Error.Println(message + " : " + err.Error())
+		ResponseJSON(types.HttpMessage{Message: message + " : " + err.Error(), Success: false}, w, statusCode)
+	} else {
+		logger.Error.Println(message + " : nil error")
+		ResponseJSON(types.HttpMessage{Message: message, Success: false}, w, statusCode)
+	}
 }
 
 func ResponseJSON(data interface{}, w http.ResponseWriter, statusCode int) {

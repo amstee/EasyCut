@@ -6,10 +6,6 @@
     "https://easy-cut.ovh",
     "http://localhost"
   ],
-  "domain": "https://easy-cut.eu.auth0.com/",
-  "api": "api/v2/",
-  "tprefix": "auth0|",
-  "oauth": "oauth/token",
   "services": [
     {
       "name": "security",
