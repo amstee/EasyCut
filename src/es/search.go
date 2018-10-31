@@ -16,5 +16,12 @@ func Search(index string, query elastic.Query, sortField string, asc bool, rang 
 	if up := CheckESService(); !up {
 		return nil, errors.New("can't connect to database")
 	}
-	return Client.Search().Index(index).Query(query).Sort(sortField, asc).From(0).Size(rang).Do(Ctx)
+	search := Client.Search().Index(index).Query(query)
+	if sortField != "" {
+		search.Sort(sortField, asc)
+	}
+	if rang != -1 {
+		search.From(0).Size(rang)
+	}
+	return search.Do(Ctx)
 }

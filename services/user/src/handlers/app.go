@@ -12,7 +12,7 @@ import (
 )
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	var result vars.User
+	var result common.User
 	v := mux.Vars(r)
 
 	if userId, ok := v["user"]; ok {
@@ -31,7 +31,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var user vars.UserUpdate
-	var result vars.User
+	var result common.User
 	v := mux.Vars(r)
 
 	if userId, ok := v["user"]; ok {
@@ -54,7 +54,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user vars.UserCreation
-	var result vars.User
+	var result common.User
 
 	token, err := auth0.GetToken(); if err != nil {
 		common.ResponseError("unable to retrieve api token", err, w, http.StatusInternalServerError); return
@@ -72,7 +72,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func ListUsers(w http.ResponseWriter, r *http.Request) {
 	var search vars.Search
-	var result []vars.User
+	var result []common.User
 	vals := r.URL.Query()
 
 	search.Build(vals)
@@ -92,5 +92,5 @@ func SetUserRoutes(router *mux.Router) {
 	router.HandleFunc("/create", CreateUser).Methods("POST")
 	router.HandleFunc("/list", ListUsers).Methods("GET")
 	router.HandleFunc("/update/{user}", UpdateUser).Methods("PUT")
-	router.HandleFunc("/{user}", GetUser).Methods("GET")
+	router.HandleFunc("/get/{user}", GetUser).Methods("GET")
 }

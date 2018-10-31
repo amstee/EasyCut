@@ -4,7 +4,6 @@ import (
 	"github.com/olivere/elastic"
 	"github.com/amstee/easy-cut/src/config"
 	"context"
-	"github.com/amstee/easy-cut/src/logger"
 )
 
 type setter func() error
@@ -36,10 +35,8 @@ func InitClient(callable func() error) error {
 	}
 	Client, err = elastic.NewClient(elastic.SetURL(config.GetServiceURL("elasticsearch")))
 	if err != nil {
-		logger.Error.Println("Elastic search connection failed")
 		return err
 	}
-	logger.Error.Println("Elastic search connection success")
 	connected = true
 	if call == nil {
 		return nil

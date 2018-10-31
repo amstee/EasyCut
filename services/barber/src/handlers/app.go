@@ -41,7 +41,7 @@ func GetBarber(w http.ResponseWriter, r *http.Request) {
 
 	userId, ok := v["user"]; if ok {
 		token, err := common.GetBearer(r); if err == nil {
-			resp, err := request.ExpectJson(config.GetServiceURL("user") + userId, http.MethodGet,
+			resp, err := request.ExpectJson(config.GetServiceURL("user") + "/get/" + userId, http.MethodGet,
 											"Bearer " + token, nil, &result.User)
 			if err == nil && resp.StatusCode == http.StatusOK {
 				err = core.FindBarber(&result.Barber, userId); if err == nil {
@@ -57,8 +57,20 @@ func GetBarber(w http.ResponseWriter, r *http.Request) {
 }
 
 func ListBarbers(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(200)
-	w.Write([]byte("ok"))
+	//vals := r.URL.Query()
+	var users []common.User
+	result := make(map[string]*vars.BarberResponse)
+
+	token, err := common.GetBearer(r); if err == nil {
+		resp, err := request.ExpectJson(config.GetServiceURL("user") + "/list", http.MethodGet,
+										"Bearer " + token, nil, &users)
+		if err == nil && resp.StatusCode == http.StatusOK {
+			for i := range users {
+				result[users[i].UserId] = &vars.BarberResponse{User: users[i]}
+			}
+			err = core.FindBarbers(result)
+		}
+	}
 }
 
 func UpdateBarber(w http.ResponseWriter, r *http.Request) {
