@@ -1,4 +1,4 @@
-# User
+# Barber
 
 [Previous page](../README.md)
 
