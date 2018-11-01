@@ -8,6 +8,7 @@ import (
 	"github.com/amstee/easy-cut/src/common"
 	"github.com/amstee/easy-cut/src/request"
 	"github.com/amstee/easy-cut/src/config"
+	"github.com/amstee/easy-cut/src/types"
 )
 
 func CreateBarber(w http.ResponseWriter, r *http.Request) {
@@ -70,7 +71,7 @@ func ListBarbers(w http.ResponseWriter, r *http.Request) {
 			resp, err := request.FetchJson(fetch, &users)
 			if err == nil && resp.StatusCode == http.StatusOK {
 				if len(users) <= 0 {
-					common.ResponseError("your query didn't match any barber", nil, w, http.StatusOK)
+					common.ResponseError("your query didn't match any barber", nil, w, http.StatusOK); return
 				}
 				for i := range users {
 					result[users[i].UserId[6:]] = &vars.BarberResponse{User: users[i]}
@@ -88,8 +89,31 @@ func ListBarbers(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateBarber(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(200)
-	w.Write([]byte("ok"))
+	var barberUpdate vars.Barber
+	v := mux.Vars(r)
+
+	userId, ok := v["user"]; if ok {
+		err := common.DecodeJSON(&barberUpdate, r); if err == nil {
+			err = core.UpdateBarber(&barberUpdate, userId); if err == nil {
+				common.ResponseJSON(barberUpdate, w, http.StatusOK); return
+			}
+			common.ResponseError("unable to update barber", err, w, http.StatusInternalServerError); return
+		}
+		common.ResponseError("unable to decode body", err, w, http.StatusBadRequest); return
+	}
+	common.ResponseError("user not found in url", nil, w, http.StatusBadRequest); return
+}
+
+func DeleteBarber(w http.ResponseWriter, r *http.Request) {
+	v := mux.Vars(r)
+
+	userId, ok := v["user"]; if ok {
+		err := core.DeleteBarber(userId); if err == nil {
+			common.ResponseJSON(types.HttpMessage{Message: "Barber deleted"}, w, http.StatusOK); return
+		}
+		common.ResponseError("unable to delete barber", err, w, http.StatusInternalServerError); return
+	}
+	common.ResponseError("user not found in url", nil, w, http.StatusBadRequest); return
 }
 
 func SetBarberRoutes(router *mux.Router) {
@@ -97,4 +121,5 @@ func SetBarberRoutes(router *mux.Router) {
 	router.HandleFunc("/get/{user}", GetBarber).Methods("GET")
 	router.HandleFunc("/list", ListBarbers).Methods("GET")
 	router.HandleFunc("/update/{user}", UpdateBarber).Methods("PUT")
+	router.HandleFunc("/delete/{user}", DeleteBarber).Methods("DELETE")
 }

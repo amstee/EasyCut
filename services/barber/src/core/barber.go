@@ -10,6 +10,26 @@ import (
 	"fmt"
 )
 
+func DeleteBarber(id string) error {
+	err := FindBarber(nil, id); if err != nil {
+		return errors.New("this barber does not exist")
+	}
+	_, err = es.DeleteDoc("easy_cut", "barber", id); if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateBarber(barber *vars.Barber, id string) error {
+	err := FindBarber(nil, id); if err != nil {
+		return errors.New("this barber does not exist")
+	}
+	_, err = es.UpdateDoc("easy_cut", "barber", id, barber); if err != nil {
+		return err
+	}
+	return nil
+}
+
 func CreateBarber(barber *vars.Barber, userId string) error {
 	err := FindBarber(nil, userId); if err == nil {
 		return errors.New("this barber already exist")

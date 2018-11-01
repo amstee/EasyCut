@@ -35,7 +35,9 @@
     {
       "match_user": true,
       "route": "/update.*",
-      "permissions": ["User", "Barber"]
+      "permissions": [
+        "Barber"
+      ]
     },
     {
       "match_user": false,
@@ -49,6 +51,13 @@
       "route": "/list",
       "permissions": [
         "User"
+      ]
+    },
+    {
+      "match_user": true,
+      "route": "/delete.*",
+      "permissions": [
+        "Barber"
       ]
     }
   ]

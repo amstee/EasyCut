@@ -13,8 +13,7 @@ func Index(index string, itype string, data interface{}) (*elastic.IndexResponse
 	}
 	resp, err := Client.Index().Index(index).Type(itype).BodyJson(data).Do(Ctx); if err == nil {
 		logger.Info.Printf("Indexed %s %s to index %s, type %s\n", itype, resp.Id, resp.Index, resp.Type)
-	}
-	if err != nil {
+	} else {
 		return resp, err
 	}
 	return resp, Flush(index)
@@ -26,8 +25,7 @@ func IndexById(index string, itype string, id string, data interface{}) (*elasti
 	}
 	resp, err := Client.Index().Index(index).Type(itype).Id(id).BodyJson(data).Do(Ctx); if err == nil {
 		logger.Info.Printf("Indexed %s %s to index %s, type %s\n", itype, resp.Id, resp.Index, resp.Type)
-	}
-	if err != nil {
+	} else {
 		return resp, err
 	}
 	return resp, Flush(index)
