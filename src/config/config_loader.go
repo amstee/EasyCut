@@ -28,6 +28,7 @@ type Service struct {
 
 type DataConfig struct {
 	Auth0 bool 			`json:"auth0"`
+	Version string 		`json:"version"`
 	Name string 		`json:"name"`
 	Port int			`json:"port"`
 	TPrefix string 		`json:"tprefix"`
@@ -171,6 +172,7 @@ func (c *DataConfig) LoadConfig() (error) {
 	viper.SetDefault("sfile", "/run/secrets/auth0_api")
 	viper.SetDefault("api", "api/v2")
 	viper.SetDefault("oauth", "oauth/token")
+	viper.SetDefault("version", "0.0.1")
 	viper.SetDefault("auth0", false)
 	viper.SetDefault("env", "dev")
 	if err := viper.ReadInConfig(); err != nil {

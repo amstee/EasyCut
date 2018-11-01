@@ -9,7 +9,7 @@ import (
 )
 
 func SystemStatus(w http.ResponseWriter, _ *http.Request)  {
-	resp := types.StatusResponse{Status: "ok", Service: config.Content.Name, Version: "0.0.1"}
+	resp := types.StatusResponse{Status: "ok", Service: config.Content.Name, Version: config.Content.Version}
 	common.ResponseJSON(resp, w, 200)
 }
 
