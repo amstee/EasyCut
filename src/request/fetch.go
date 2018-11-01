@@ -7,10 +7,22 @@ import (
 	"errors"
 )
 
-func ExpectJson(url string, method string, token string, body interface{}, res interface{}) (*http.Response, error) {
+func FetchJson(req *http.Request, res interface{}) (*http.Response, error) {
+	client := &http.Client{}
+
+	resp, err := client.Do(req); if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	err = json.NewDecoder(resp.Body).Decode(res); if err != nil {
+		return nil, err
+	}
+	return resp, err
+}
+
+func CreateFetchJson(url string, method string, token string, body interface{}) (*http.Request, error) {
 	jsonData := []byte("")
 	err := errors.New("")
-	client := &http.Client{}
 
 	if body != nil {
 		jsonData, err = json.Marshal(body); if err != nil {
@@ -25,12 +37,12 @@ func ExpectJson(url string, method string, token string, body interface{}, res i
 	if method != "GET" {
 		req.Header.Set("Content-Type", "application/json")
 	}
-	resp, err := client.Do(req); if err != nil {
+	return req, nil
+}
+
+func ExpectJson(url string, method string, token string, body interface{}, res interface{}) (*http.Response, error) {
+	req, err := CreateFetchJson(url, method, token, body); if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	err = json.NewDecoder(resp.Body).Decode(res); if err != nil {
-		return nil, err
-	}
-	return resp, err
+	return FetchJson(req, res)
 }

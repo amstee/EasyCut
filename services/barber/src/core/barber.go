@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"github.com/amstee/easy-cut/src/logger"
 	"github.com/olivere/elastic"
+	"fmt"
 )
 
 func CreateBarber(barber *vars.Barber, userId string) error {
@@ -34,23 +35,34 @@ func FindBarber(barber *vars.Barber, usedId string) error {
 }
 
 func FindBarbers(barbers map[string]*vars.BarberResponse) error {
+	var query elastic.Query
 	var users []string
 
 	for k := range barbers {
 		users = append(users, k)
 	}
-	query := elastic.NewTermQuery("_id", users)
+	if len(users) == 1 {
+		query = elastic.NewTermQuery("_id", users[0])
+	} else {
+		query = elastic.NewTermsQuery("_id", users)
+	}
 	result, err := es.Search("easy_cut", query, "", false, -1)
 	if err != nil {
 		return err
 	}
 	if result.Hits.TotalHits > 0 {
 		for _, hit := range result.Hits.Hits {
-			err := json.Unmarshal(*hit.Source, &barbers[hit.Id].Barber)
-			if err != nil {
-				logger.Error.Println("unable to unmarshal barber id = ", hit.Id, ", raw data = ", hit)
+			fmt.Println(barbers[hit.Id])
+			if barbers[hit.Id] != nil {
+				err := json.Unmarshal(*hit.Source, &barbers[hit.Id].Barber)
+				if err != nil {
+					logger.Error.Println("unable to unmarshal barber id = ", hit.Id, ", raw data = ", hit)
+				}
+			} else {
+				return errors.New("results incoherent")
 			}
 		}
+		return nil
 	}
 	return errors.New("no barber found")
 }

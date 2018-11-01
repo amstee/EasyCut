@@ -6,7 +6,6 @@ import (
 	"github.com/amstee/easy-cut/services/user/src/vars"
 	"github.com/amstee/easy-cut/src/request"
 	"github.com/amstee/easy-cut/src/config"
-	"fmt"
 	"github.com/amstee/easy-cut/src/common"
 	"github.com/amstee/easy-cut/src/auth0"
 )
@@ -79,7 +78,6 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 	token, err := auth0.GetToken(); if err != nil {
 		common.ResponseError("unable to retrieve api token", err, w, http.StatusInternalServerError); return
 	}
-	fmt.Println(search.GetSearch())
 	resp, err := request.ExpectJson(config.Content.GetApi() + "users" + search.GetSearch(),
 		http.MethodGet, token.Format(), nil, &result)
 	if err != nil {

@@ -57,20 +57,34 @@ func GetBarber(w http.ResponseWriter, r *http.Request) {
 }
 
 func ListBarbers(w http.ResponseWriter, r *http.Request) {
-	//vals := r.URL.Query()
+	v := r.URL.Query()
 	var users []common.User
 	result := make(map[string]*vars.BarberResponse)
 
+	v.Set("group", "Barber")
 	token, err := common.GetBearer(r); if err == nil {
-		resp, err := request.ExpectJson(config.GetServiceURL("user") + "/list", http.MethodGet,
-										"Bearer " + token, nil, &users)
-		if err == nil && resp.StatusCode == http.StatusOK {
-			for i := range users {
-				result[users[i].UserId] = &vars.BarberResponse{User: users[i]}
+		fetch, err := request.CreateFetchJson(config.GetServiceURL("user") + "/list", http.MethodGet,
+										"Bearer " + token, nil)
+		if err == nil {
+			fetch.URL.RawQuery = v.Encode()
+			resp, err := request.FetchJson(fetch, &users)
+			if err == nil && resp.StatusCode == http.StatusOK {
+				if len(users) <= 0 {
+					common.ResponseError("your query didn't match any barber", nil, w, http.StatusOK)
+				}
+				for i := range users {
+					result[users[i].UserId[6:]] = &vars.BarberResponse{User: users[i]}
+				}
+				err = core.FindBarbers(result); if err == nil {
+					common.ResponseJSON(core.MtoL(result), w, http.StatusOK); return
+				}
+				common.ResponseError("barbers not found", err, w, http.StatusInternalServerError); return
 			}
-			err = core.FindBarbers(result)
+			common.ResponseError("unable to retrieve users", err, w, http.StatusInternalServerError); return
 		}
+		common.ResponseError("unable to construct request", err, w, http.StatusInternalServerError); return
 	}
+	common.ResponseError("unable to retrieve token", err, w, http.StatusBadRequest); return
 }
 
 func UpdateBarber(w http.ResponseWriter, r *http.Request) {
