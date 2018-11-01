@@ -1,0 +1,31 @@
+{
+  "name": "salon",
+  "version": "0.0.1",
+  "port": 8080,
+  "origins": [
+    "http://easy-cut.ovh",
+    "https://easy-cut.ovh",
+    "http://localhost"
+  ],
+  "services": [
+    {
+      "name": "security",
+      "url": "http://auth:8080"
+    },
+    {
+      "name": "user",
+      "url": "http://user:8080"
+    },
+    {
+      "name": "elasticsearch",
+      "url": "http://elasticsearch:9200"
+    }
+  ],
+  "routes": [
+    {
+      "match_user": false,
+      "route": "/status",
+      "permissions": []
+    }
+  ]
+}

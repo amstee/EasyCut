@@ -11,10 +11,11 @@ import (
 	"github.com/amstee/easy-cut/src/middlewares"
 	"github.com/amstee/easy-cut/src/auth0"
 	"github.com/amstee/easy-cut/src/common"
+	"github.com/amstee/easy-cut/src/status"
 )
 
 func initialize(router *mux.Router, secureRoutes mux.MiddlewareFunc) *negroni.Negroni {
-	status := router.PathPrefix("/status").Subrouter()
+	stat := router.PathPrefix("/status").Subrouter()
 	user := router.PathPrefix("/").Subrouter()
 	router.Use(secureRoutes)
 
@@ -22,7 +23,7 @@ func initialize(router *mux.Router, secureRoutes mux.MiddlewareFunc) *negroni.Ne
 	c := cors.New(cors.Options{AllowedOrigins: config.Content.Origins})
 	n.Use(negroni.NewLogger())
 	n.Use(c)
-	handlers.SetStatusRoutes(status)
+	status.SetStatusRoutes(stat)
 	handlers.SetUserRoutes(user)
 	n.UseHandler(router)
 	return n

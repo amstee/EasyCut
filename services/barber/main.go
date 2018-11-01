@@ -12,10 +12,11 @@ import (
 	"github.com/amstee/easy-cut/services/barber/src/handlers"
 	"github.com/amstee/easy-cut/src/es"
 	"github.com/amstee/easy-cut/services/barber/src/vars"
+	"github.com/amstee/easy-cut/src/status"
 )
 
 func initalize(router *mux.Router, secureRoutes mux.MiddlewareFunc) *negroni.Negroni {
-	status := router.PathPrefix("/status").Subrouter()
+	stat := router.PathPrefix("/status").Subrouter()
 	barber := router.PathPrefix("/").Subrouter()
 	router.Use(secureRoutes)
 
@@ -23,7 +24,7 @@ func initalize(router *mux.Router, secureRoutes mux.MiddlewareFunc) *negroni.Neg
 	c := cors.New(cors.Options{AllowedOrigins: config.Content.Origins})
 	n.Use(negroni.NewLogger())
 	n.Use(c)
-	handlers.SetStatusRoutes(status)
+	status.SetStatusRoutes(stat)
 	handlers.SetBarberRoutes(barber)
 	n.UseHandler(router)
 	return n

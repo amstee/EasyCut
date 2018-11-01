@@ -21,7 +21,6 @@
       "url": "http://elasticsearch:9200"
     }
   ],
-  "sfile": "/run/secrets/auth0_api",
   "routes": [
     {
       "match_user": false,
