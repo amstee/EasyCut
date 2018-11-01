@@ -71,6 +71,11 @@ The project infrastructure is being developed and maintained in order to be easi
 on a kubernetes cluster, docker swarm cluster and locally.
 
 
-### Directory src
+### Src directory
 
 The src directory contains common code to all services, you can consider it as a library
+
+
+### Postman directory
+
+the postman directory contains a postman configuration to quickly test easy cut server endpoints

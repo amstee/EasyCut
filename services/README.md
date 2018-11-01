@@ -19,7 +19,7 @@ To see more details about these endpoints check the [Auth service](auth/README.m
 
 ## User
 
-This service allow third parties to manipulate auth0 users, is allows you to find users,
+This service allow third parties to manipulate auth0 users, it allows you to find users,
 create users, ...
 It also allows you to manipulate user's easy cut profile.
 
@@ -35,7 +35,21 @@ For more details about these endpoints check the [User service](user/README.md)
 
 ## Barber
 
-To be developed
+This service allow third parties to manipuate easy cut barbers, with this service you can
+create, update, ... barbers.
+
+A barber is linked to a user, meaning that they share the same id.
+
+This service exposes six different endpoints for barbers management :
+
+* Server status : `GET /barber/status`
+* Create barber : `POST /barber/create/{user}`
+* Get barber `GET /barber/get/{user}`
+* List barbers : `GET /barber/list`
+* Update barber : `PUT /barber/update/{user}`
+* Delete barber : `DELETE /barber/delete/{user}`
+
+For more details about these endpoints check the [Barber service](barber/README.md)
 
 ## Salon
 

@@ -108,6 +108,16 @@ if [ $1 = "build" ]; then
     echo "Build of all services done"
 fi
 
+if [ $1 = "push" ]; then
+    cd services
+    for i in "${services[@]}"
+    do
+        cd ${i}/
+        make push SERVICE=${i} TAG="${TAG}"
+    done
+    echo "Push of all services done"
+fi
+
 if [ $1 = "activate_swarm" ]; then
     eval $(docker-machine env -u)
 fi

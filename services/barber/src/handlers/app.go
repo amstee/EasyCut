@@ -23,7 +23,7 @@ func CreateBarber(w http.ResponseWriter, r *http.Request) {
 					http.MethodPut, "Bearer " + token, role, &result.User)
 				if err == nil && resp.StatusCode == http.StatusOK {
 					err = core.CreateBarber(&result.Barber, userId); if err == nil {
-						common.ResponseJSON(result, w, http.StatusOK); return
+						common.ResponseJSON(result, w, http.StatusCreated); return
 					}
 					common.ResponseError("unable to save barber's data", err, w, http.StatusInternalServerError); return
 				}
