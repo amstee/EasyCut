@@ -18,14 +18,17 @@ type DataConfig struct {
 }
 
 func (c *DataConfig) Display() {
-	fmt.Println("Running with config : ")
-	fmt.Printf("Port: %d\n", c.Port)
-	fmt.Println("Origins: ")
-	for _, o := range c.Origins {
-		fmt.Println(o)
+	fmt.Println("__________________CONFIGURATION__________________")
+	fmt.Println("Service -------- " + c.Name + " Version : " + c.Version + " --------")
+	fmt.Printf("\tPort =\t\t%d\n", c.Port)
+	fmt.Println("\tJwks =\t\t" + c.Jwks)
+	fmt.Printf("\tBearer prefix =\t%s\n", c.TPrefix)
+	fmt.Println("\tEnv =\t\t " + c.Env)
+	fmt.Println("CORS :")
+	for i, o := range c.Origins {
+		fmt.Printf("\tOrigin %d is %s\n", i, o)
 	}
-	fmt.Println("Jwks: " + c.Jwks)
-	fmt.Println("Env: " + c.Env)
+	fmt.Println("__________________CONFIGURATION__________________")
 }
 
 func (c *DataConfig) LoadEnv() (error) {

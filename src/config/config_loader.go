@@ -58,8 +58,8 @@ func Display() {
 
 func (c *DataConfig) Display() {
 	e := false
-	fmt.Println("_________CONFIGURATION_________")
-	fmt.Println("Service -------- " + c.Name + " --------")
+	fmt.Println("__________________CONFIGURATION__________________")
+	fmt.Println("Service -------- " + c.Name + " Version : " + c.Version + " --------")
 	fmt.Printf("\tPort =\t\t%d\n", c.Port)
 	fmt.Printf("\tEnvironment =\t%s\n", c.Env)
 	fmt.Println("Auth0 configuration :")
@@ -87,7 +87,7 @@ func (c *DataConfig) Display() {
 			fmt.Println("\t\tNo permissions needed")
 		}
 	}
-	fmt.Println("_________CONFIGURATION_________")
+	fmt.Println("__________________CONFIGURATION__________________")
 }
 
 func GetServiceURL(name string) string {
