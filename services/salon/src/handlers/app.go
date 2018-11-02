@@ -6,7 +6,16 @@ import (
 )
 
 func CreateSalon(w http.ResponseWriter, r *http.Request) {
-
+	//role := vars.GetSalonRole()
+	//result := vars.Salon{}
+	//
+	//token, err := common.GetBearer(r); if err == nil {
+	//	err = common.DecodeJSON(&result, r); if err == nil {
+	//		//resp, err := request.ExpectJson(config.GetServiceURL("user") + "/update/" + userId)
+	//	}
+	//	common.ResponseError("unable to decode body", nil, w, http.StatusBadRequest); return
+	//}
+	//common.ResponseError("unable to retrieve token", nil, w, http.StatusBadRequest); return
 }
 
 func GetSalon(w http.ResponseWriter, r *http.Request) {

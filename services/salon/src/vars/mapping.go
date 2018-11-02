@@ -11,10 +11,13 @@ const SalonMapping = `
 		"mappings": {
 			"salon": {
 				"properties": {
+					"user_id": {
+						"type": "string"
+					},
 					"address": {
 						"type": "string"
 					},
-					"employees_number": {
+					"employee_number": {
 						"type": "integer"
 					},
 					"barbers": {
