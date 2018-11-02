@@ -44,7 +44,6 @@ func FindBarber(barber *vars.Barber, usedId string) error {
 	resp, err := es.GetById("easy_cut", "barber", usedId); if err != nil {
 		return err
 	}
-	logger.Info.Println(resp)
 	if resp.Found {
 		if barber != nil {
 			return json.Unmarshal(*resp.Source, barber)

@@ -14,8 +14,10 @@ func FetchJson(req *http.Request, res interface{}) (*http.Response, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	err = json.NewDecoder(resp.Body).Decode(res); if err != nil {
-		return nil, err
+	if res != nil {
+		err = json.NewDecoder(resp.Body).Decode(res); if err != nil {
+			return nil, err
+		}
 	}
 	return resp, err
 }

@@ -8,12 +8,13 @@ This project is composed of a total of six services
 
 This service allow easy cut services or any other third party to validate a easy cut user connection and permissions.
 
-It exposes four different endpoints :
+It exposes five different endpoints :
 
 * Server status : `GET /auth/status`
 * Check token validity : `GET /auth/token` 
-* Check User Permissions : `POST /auth/secured/permissions`
-* Check user groups : `POST /auth/secured/groups`
+* Check User Permissions : `POST /auth/secure/permissions`
+* Check user groups : `POST /auth/secure/groups`
+* Extract info from token : `GET /auth/secure/extract`
 
 To see more details about these endpoints check the [Auth service](auth/README.md)
 

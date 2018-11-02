@@ -60,7 +60,7 @@ Send the service current status and version
 
 Allow to check Auth0 user permissions
 
-#### Route `/auth/secured/permissions`
+#### Route `/auth/secure/permissions`
 
 #### Type : `POST`
 
@@ -104,7 +104,7 @@ Allow to check Auth0 user permissions
 
 Allow to check easy-cut users groups
 
-#### Route `/auth/secured/groups`
+#### Route `/auth/secure/groups`
 
 #### Type : `POST`
 
@@ -133,6 +133,47 @@ Allow to check easy-cut users groups
     "User": true,
     "Barber": false
   }
+}
+```
+
+#### Response on error :
+
+```json
+{
+    "message": "error description",
+    "success": false
+}
+```
+
+## Extract
+
+Extract info from jwt
+
+#### Route `/auth/secure/extract`
+
+#### Type : `GET`
+
+#### Headers :
+
+```json
+{
+  "Authorization": "Bearer [...token]"
+}
+```
+
+#### Get params
+
+```json
+{
+  "user": "true"
+}
+```
+
+#### Response on success :
+
+```json
+{
+  "user_id": "string"
 }
 ```
 

@@ -29,7 +29,7 @@ func Groups(w http.ResponseWriter, r *http.Request) {
 	var resp *vars.GroupsResponse
 
 	token, err := common.GetBearer(r); if err != nil {
-		common.ResponseError("unable to retrieve token", err, w, http.StatusInternalServerError); return
+		common.ResponseError("unable to retrieve token", err, w, http.StatusBadRequest); return
 	}
 	err = common.DecodeJSON(&groups, r); if err != nil {
 		common.ResponseError("unable to decode body", err, w, http.StatusBadRequest); return
@@ -38,6 +38,33 @@ func Groups(w http.ResponseWriter, r *http.Request) {
 		common.ResponseError("unable to check user groups", err, w, http.StatusInternalServerError); return
 	}
 	common.ResponseJSON(resp, w, 200)
+}
+
+func ExtractToken(w http.ResponseWriter, r *http.Request) {
+	var resp types.ExtractResponse
+	var content vars.ExtractContent
+	vals := r.URL.Query()
+
+	tokenString, err := common.GetBearer(r); if err != nil {
+		common.ResponseError("unable to retrieve token", err, w, http.StatusBadRequest); return
+	}
+	content.Load(vals)
+	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		cert, err := core.GetCertificate(token); if err != nil {
+			return nil, err
+		}
+		result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
+		return result, nil
+	}); if err != nil {
+		common.ResponseError("unable to parse token", err, w, http.StatusBadRequest); return
+	}
+	claims, ok := token.Claims.(*jwt.StandardClaims); if ok && token.Valid {
+		if content.User {
+			resp.UserId = claims.Subject
+		}
+		common.ResponseJSON(resp, w, http.StatusOK); return
+	}
+	common.ResponseError("unable to parse token", err, w, http.StatusBadRequest); return
 }
 
 func GroupsAndMatch(w http.ResponseWriter, r *http.Request) {
@@ -93,4 +120,5 @@ func SetAuthenticatedRoutes(router *mux.Router) {
 	router.HandleFunc("/permissions", Permissions).Methods("POST")
 	router.HandleFunc("/groups/{user}", GroupsAndMatch).Methods("POST")
 	router.HandleFunc("/groups", Groups).Methods("POST")
+	router.HandleFunc("/extract", ExtractToken).Methods("GET")
 }

@@ -3,19 +3,40 @@ package handlers
 import (
 	"github.com/gorilla/mux"
 	"net/http"
+	"github.com/amstee/easy-cut/services/salon/src/vars"
+	"github.com/amstee/easy-cut/src/common"
+	"github.com/amstee/easy-cut/src/request"
+	"github.com/amstee/easy-cut/src/config"
+	"github.com/amstee/easy-cut/src/types"
+	"github.com/amstee/easy-cut/services/salon/src/core"
 )
 
 func CreateSalon(w http.ResponseWriter, r *http.Request) {
-	//role := vars.GetSalonRole()
-	//result := vars.Salon{}
-	//
-	//token, err := common.GetBearer(r); if err == nil {
-	//	err = common.DecodeJSON(&result, r); if err == nil {
-	//		//resp, err := request.ExpectJson(config.GetServiceURL("user") + "/update/" + userId)
-	//	}
-	//	common.ResponseError("unable to decode body", nil, w, http.StatusBadRequest); return
-	//}
-	//common.ResponseError("unable to retrieve token", nil, w, http.StatusBadRequest); return
+	var extract types.ExtractResponse
+	role := vars.GetSalonRole()
+	data := vars.Salon{}
+
+	token, err := common.GetBearer(r); if err == nil {
+		err = common.DecodeJSON(&data, r); if err == nil {
+			resp, err := request.ExpectJson(config.GetServiceURL("security") + "/secure/extract?user=true",
+											http.MethodGet, "Bearer " + token, nil, &extract)
+			if err == nil && resp.StatusCode == http.StatusOK {
+				resp, err := request.ExpectJson(config.GetServiceURL("user") + "/update/" + extract.UserId,
+												http.MethodPut, "Bearer " + token, role, nil)
+				if err == nil && resp.StatusCode == http.StatusOK {
+					data.UserId = extract.UserId
+					err = core.CreateSalon(&data); if err == nil {
+						common.ResponseJSON(data, w, http.StatusOK); return
+					}
+					common.ResponseError("failed to save salon", err, w, http.StatusInternalServerError); return
+				}
+				common.ResponseError("failed to update groups", err, w, http.StatusInternalServerError); return
+			}
+			common.ResponseError("invalid token", err, w, http.StatusBadRequest); return
+		}
+		common.ResponseError("unable to decode body", err, w, http.StatusBadRequest); return
+	}
+	common.ResponseError("unable to retrieve token", err, w, http.StatusBadRequest); return
 }
 
 func GetSalon(w http.ResponseWriter, r *http.Request) {

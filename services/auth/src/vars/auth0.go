@@ -1,6 +1,8 @@
 package vars
 
-import "github.com/dgrijalva/jwt-go"
+import (
+	"github.com/dgrijalva/jwt-go"
+)
 
 type UserGroups struct {
 	AppMetadata struct{

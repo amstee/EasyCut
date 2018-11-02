@@ -9,5 +9,5 @@ type AppMetadata struct {
 }
 
 func GetSalonRole() AppMetadata {
-	return AppMetadata{Authorization: Authorization{Groups: []string{"SalonOwner"}}}
+	return AppMetadata{Authorization: Authorization{Groups: []string{"Salon"}}}
 }
