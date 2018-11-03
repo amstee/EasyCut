@@ -40,12 +40,30 @@ func CreateSalon(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetSalon(w http.ResponseWriter, r *http.Request) {
+	data := vars.Salon{}
+	v := mux.Vars(r)
 
+	salonId, ok := v["salon"]; if ok {
+		err := core.FindSalon(&data, salonId); if err == nil {
+			common.ResponseJSON(data, w, http.StatusOK); return
+		}
+		common.ResponseError("salon not found", err, w, http.StatusInternalServerError); return
+	}
+	common.ResponseError("user not found in url", nil, w, http.StatusBadRequest)
 }
 
 // This route should be able to take filters as url params enabling to find salons near etc ...
 func ListSalon(w http.ResponseWriter, r *http.Request) {
+	v := r.URL.Query()
+	var extract vars.ExtractQuery
 
+	if err := extract.Load(v); err != nil {
+		common.ResponseError("invalid url parameters", err, w, http.StatusBadRequest)
+	}
+	data, err := core.FindSalons(extract); if err == nil {
+		common.ResponseJSON(data, w, http.StatusOK); return
+	}
+	common.ResponseError("Cannot find salons", err, w, http.StatusInternalServerError)
 }
 
 // for update route you should use a specific data type to perform several actions

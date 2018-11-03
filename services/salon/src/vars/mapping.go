@@ -14,6 +14,9 @@ const SalonMapping = `
 					"user_id": {
 						"type": "string"
 					},
+					"name": {
+						"type": "string"
+					},
 					"address": {
 						"type": "string"
 					},

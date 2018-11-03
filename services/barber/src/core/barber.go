@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"github.com/amstee/easy-cut/src/logger"
 	"github.com/olivere/elastic"
-	"fmt"
 )
 
 func DeleteBarber(id string) error {
@@ -71,7 +70,6 @@ func FindBarbers(barbers map[string]*vars.BarberResponse) error {
 	}
 	if result.Hits.TotalHits > 0 {
 		for _, hit := range result.Hits.Hits {
-			fmt.Println(barbers[hit.Id])
 			if barbers[hit.Id] != nil {
 				err := json.Unmarshal(*hit.Source, &barbers[hit.Id].Barber)
 				if err != nil {

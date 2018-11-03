@@ -25,3 +25,4 @@ func Search(index string, query elastic.Query, sortField string, asc bool, rang 
 	}
 	return search.Do(Ctx)
 }
+
