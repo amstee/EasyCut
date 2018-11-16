@@ -26,6 +26,21 @@
       "match_user": false,
       "route": "/status",
       "permissions": []
+    },
+    {
+      "match_user": false,
+      "route": "/create",
+      "permissions": ["User"]
+    },
+    {
+      "match_user": false,
+      "route": "/get.*",
+      "permissions": ["User"]
+    },
+    {
+      "match_user": false,
+      "route": "/list",
+      "permissions": ["User"]
     }
   ]
 }

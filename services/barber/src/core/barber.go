@@ -13,7 +13,7 @@ func DeleteBarber(id string) error {
 	err := FindBarber(nil, id); if err != nil {
 		return errors.New("this barber does not exist")
 	}
-	_, err = es.DeleteDoc("easy_cut", "barber", id); if err != nil {
+	_, err = es.DeleteDoc("barber", "barber", id); if err != nil {
 		return err
 	}
 	return nil
@@ -23,7 +23,7 @@ func UpdateBarber(barber *vars.Barber, id string) error {
 	err := FindBarber(nil, id); if err != nil {
 		return errors.New("this barber does not exist")
 	}
-	_, err = es.UpdateDoc("easy_cut", "barber", id, barber); if err != nil {
+	_, err = es.UpdateDoc("barber", "barber", id, barber); if err != nil {
 		return err
 	}
 	return nil
@@ -33,14 +33,14 @@ func CreateBarber(barber *vars.Barber, userId string) error {
 	err := FindBarber(nil, userId); if err == nil {
 		return errors.New("this barber already exist")
 	}
-	_, err = es.IndexById("easy_cut", "barber", userId, barber); if err != nil {
+	_, err = es.IndexById("barber", "barber", userId, barber); if err != nil {
 		return err
 	}
 	return nil
 }
 
 func FindBarber(barber *vars.Barber, usedId string) error {
-	resp, err := es.GetById("easy_cut", "barber", usedId); if err != nil {
+	resp, err := es.GetById("barber", "barber", usedId); if err != nil {
 		return err
 	}
 	if resp.Found {
@@ -64,7 +64,7 @@ func FindBarbers(barbers map[string]*vars.BarberResponse) error {
 	} else {
 		query = elastic.NewTermsQuery("_id", users)
 	}
-	result, err := es.Search("easy_cut", query, "", false, -1)
+	result, err := es.Search("barber", query, "", false, -1)
 	if err != nil {
 		return err
 	}

@@ -42,5 +42,5 @@ const SalonMapping = `
 `
 
 func Register() error {
-	return es.RegisterIndex("easy_cut", SalonMapping)
+	return es.RegisterIndex("salon", SalonMapping)
 }

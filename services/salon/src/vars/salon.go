@@ -52,6 +52,7 @@ func (e *ExtractQuery) ConstructQuery() (*elastic.BoolQuery) {
 }
 
 func (e *ExtractQuery) Load(values url.Values) error {
+	e.ExactAddress = false
 	v, ok := values["address"]; if ok {
 		e.Address = v[0]
 	}

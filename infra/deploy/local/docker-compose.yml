@@ -30,6 +30,13 @@ services:
       API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
     links:
       - auth
+  salon:
+    image: "amstee/easy-cut-salon:${TAG}"
+    container_name: "salon"
+    expose:
+    - 8080
+    depends_on:
+    - elasticsearch
   barber:
     image: "amstee/easy-cut-barber:${TAG}"
     container_name: "barber"

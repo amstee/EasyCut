@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"bytes"
 	"errors"
+	"github.com/amstee/easy-cut/src/logger"
 )
 
 func FetchJson(req *http.Request, res interface{}) (*http.Response, error) {
@@ -14,10 +15,14 @@ func FetchJson(req *http.Request, res interface{}) (*http.Response, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	if res != nil {
-		err = json.NewDecoder(resp.Body).Decode(res); if err != nil {
-			return nil, err
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if res != nil {
+			err = json.NewDecoder(resp.Body).Decode(res); if err != nil {
+				return nil, err
+			}
 		}
+	} else {
+		logger.Info.Printf("Received an invalid status %d code for %s", resp.StatusCode, req.URL)
 	}
 	return resp, err
 }

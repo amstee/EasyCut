@@ -60,7 +60,7 @@ func ExtractToken(w http.ResponseWriter, r *http.Request) {
 	}
 	claims, ok := token.Claims.(*jwt.StandardClaims); if ok && token.Valid {
 		if content.User {
-			resp.UserId = claims.Subject
+			resp.UserId = claims.Subject[6:]
 		}
 		common.ResponseJSON(resp, w, http.StatusOK); return
 	}

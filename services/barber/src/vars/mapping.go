@@ -30,5 +30,5 @@ const BarberMapping = `
 `
 
 func Register() error {
-	return es.RegisterIndex("easy_cut", BarberMapping)
+	return es.RegisterIndex("barber", BarberMapping)
 }

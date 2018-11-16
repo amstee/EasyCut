@@ -9,7 +9,7 @@ import (
 )
 
 func CreateSalon(salon *vars.Salon) error {
-	resp, err := es.Index("easy_cut", "salon", salon); if err != nil {
+	resp, err := es.Index("salon", "salon", salon); if err != nil {
 		return err
 	}
 	salon.Id = resp.Id
@@ -17,11 +17,12 @@ func CreateSalon(salon *vars.Salon) error {
 }
 
 func FindSalon(salon *vars.Salon, salonId string) error {
-	resp, err := es.GetById("easy_cut", "salon", salonId); if err != nil {
+	resp, err := es.GetById("salon", "salon", salonId); if err != nil {
 		return err
 	}
 	if resp.Found {
 		if salon != nil {
+			salon.Id = resp.Id
 			return json.Unmarshal(*resp.Source, salon)
 		}
 		return nil
@@ -32,14 +33,15 @@ func FindSalon(salon *vars.Salon, salonId string) error {
 func FindSalons(extract vars.ExtractQuery) (*[]vars.Salon, error) {
 	var salons []vars.Salon
 	query := extract.ConstructQuery()
-	result, err := es.Search("easy_cut", query, "", false, -1)
+	result, err := es.Search("salon", query, "", false, -1)
 	if err != nil {
 		return nil, err
 	}
 	if result.Hits.TotalHits > 0 {
 		for _, hit := range result.Hits.Hits {
 			var salon vars.Salon
-			err := json.Unmarshal(*hit.Source, salon)
+			salon.Id = hit.Id
+			err := json.Unmarshal(*(hit.Source), &salon)
 			if err != nil {
 				logger.Error.Println("unable to unmarshal salon id = ", hit.Id, ", raw data = ", hit)
 			} else {
