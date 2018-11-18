@@ -13,7 +13,7 @@ You can find the IOS app repo at `https://github.com/Mthomas3/easycuts`
 **Local :**
 
 1. Install docker and docker-compose 
-2. Run the following command `TAG=1.0.0 ./easy-cut.sh deploy local`
+2. Run the following command `TAG=1.1.0 ./easy-cut.sh deploy local`
 
 And you're done, the easy cut server is now listening over port 80 / 443 on your device !
 
