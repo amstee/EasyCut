@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-services=( appointment auth barber rating salon user )
+services=( appointment auth barber rating salon user group )
 k8conf=( "configmap/auth0.yml" "configmap/nginx.yml" "configmap/ssl.yml" )
 k8=( "auth.yml" "user.yml" "nginx.yml" "load-balancer.yml" )
 

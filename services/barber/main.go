@@ -13,6 +13,7 @@ import (
 	"github.com/amstee/easy-cut/src/es"
 	"github.com/amstee/easy-cut/services/barber/src/vars"
 	"github.com/amstee/easy-cut/src/status"
+	"github.com/amstee/easy-cut/src/auth0"
 )
 
 func initalize(router *mux.Router, secureRoutes mux.MiddlewareFunc) *negroni.Negroni {
@@ -44,11 +45,15 @@ func initES() {
 }
 
 func main() {
-	if err := config.Load(); err != nil {
+	if err := config.Load("API_CLIENT"); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 	config.Display()
+	if err := auth0.LoadToken(); err != nil {
+		fmt.Println("Auth0 error : ", err)
+		os.Exit(1)
+	}
 	initES()
 	router := mux.NewRouter()
 	secureRoutes := middlewares.GetSecurityMiddleware()

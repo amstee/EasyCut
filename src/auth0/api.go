@@ -8,19 +8,20 @@ import (
 	"fmt"
 	"encoding/json"
 	"errors"
+	"github.com/amstee/easy-cut/src/request"
 )
 
 func NewOauth() types.OauthToken {
 	return types.OauthToken{
 		GrantType: "client_credentials",
-		Audience: config.Content.Domain + config.Content.Api,
+		Audience: config.Content.Oauth.Audience,
 		ClientSecret: config.Content.ClientSecret,
 		ClientId: config.Content.ClientId,
 	}
 }
 
 func LoadToken() (error) {
-	url := config.Content.Domain + config.Content.Oauth
+	url := config.GetOauth()
 	data, err := common.JsonToReader(NewOauth()); if err != nil {
 		fmt.Println(err)
 		return err
@@ -30,12 +31,14 @@ func LoadToken() (error) {
 		return err
 	}
 	req.Header.Add("content-type", "application/json")
+	request.DisplayRequest(req)
 	res, _ := http.DefaultClient.Do(req)
 	if res == nil {
 		return errors.New("unable to execute http request, check your internet connection")
 	}
 	defer res.Body.Close()
 
+	request.DisplayResponse(res)
 	if res.StatusCode != 200 {
 		return errors.New("unable to retrieve api token")
 	}

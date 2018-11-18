@@ -8,15 +8,28 @@ This project is composed of a total of six services
 
 This service allow easy cut services or any other third party to validate a easy cut user connection and permissions.
 
-It exposes five different endpoints :
+It exposes six different endpoints :
 
 * Server status : `GET /auth/status`
 * Check token validity : `GET /auth/token` 
 * Check User Permissions : `POST /auth/secure/permissions`
 * Check user groups : `POST /auth/secure/groups`
+* Check user groups and token : `POST /auth/secure/match/{user}`
 * Extract info from token : `GET /auth/secure/extract`
 
 To see more details about these endpoints check the [Auth service](auth/README.md)
+
+## Perms
+
+This service allow to manage easy cut users permissions
+
+It exposes three different endpoints :
+
+* Server status : `GET /perms/status`
+* Get User groups : `GET /perms/get/{user}`
+* Update User groups : `PUT /perms/update/{user}`
+
+To see more details about these endpoints check the [Perms service](perms/README.md)
 
 ## User
 
@@ -36,7 +49,7 @@ For more details about these endpoints check the [User service](user/README.md)
 
 ## Barber
 
-This service allow third parties to manipuate easy cut barbers, with this service you can
+This service allow third parties to manipulate easy cut barbers, with this service you can
 create, update, ... barbers.
 
 A barber is linked to a user, meaning that they share the same id.
@@ -54,7 +67,20 @@ For more details about these endpoints check the [Barber service](barber/README.
 
 ## Salon
 
-To be developed
+This service allow third parties manipulate easy cut salons, with this service you can create, update, ... salons.
+
+A salon is linked to a user, meaning this user is the manager.
+
+This services exposes six different endpoints for salons management :
+
+* Server status : `GET /salon/status`
+* Create salon : `POST /salon/create/`
+* Get salon `GET /salon/get/{salon}`
+* List salons : `GET /salon/list`
+* Update salon : `PUT /salon/update/{salon}`
+* Delete salon : `DELETE /salon/delete/{salon}`
+
+For more details about these endpoints check the [Salon service](salon/README.md)
 
 ## Appointment
 

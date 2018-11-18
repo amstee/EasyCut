@@ -1,12 +1,21 @@
 {
   "name": "barber",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "port": 8080,
   "origins": [
     "http://easy-cut.ovh",
     "https://easy-cut.ovh",
     "http://localhost"
   ],
+  "oauth": {
+    "use": true,
+    "domain": "https://easy-cut.eu.auth0.com/",
+    "extension": "oauth/token",
+    "audience": "https://easy-cut.eu.auth0.com/api/v2/"
+  },
+  "api": {
+    "use": false
+  },
   "services": [
     {
       "name": "security",
@@ -17,44 +26,45 @@
       "url": "http://user:8080"
     },
     {
+      "name": "perms",
+      "url": "http://perms:8080"
+    },
+    {
       "name": "elasticsearch",
       "url": "http://elasticsearch:9200"
     }
   ],
   "routes": [
     {
-      "match_user": false,
       "route": "/status",
       "permissions": []
     },
     {
-      "match_user": true,
+      "match": true,
       "route": "/create.*",
       "permissions": ["User"]
     },
     {
-      "match_user": true,
+      "match": true,
       "route": "/update.*",
       "permissions": [
         "Barber"
       ]
     },
     {
-      "match_user": false,
       "route": "/get.*",
       "permissions": [
         "User"
       ]
     },
     {
-      "match_user": false,
       "route": "/list",
       "permissions": [
         "User"
       ]
     },
     {
-      "match_user": true,
+      "match": true,
       "route": "/delete.*",
       "permissions": [
         "Barber"

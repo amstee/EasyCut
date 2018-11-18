@@ -13,8 +13,18 @@ services:
     depends_on:
       - auth
       - user
+      - perms
+      - salon
       - barber
       - elasticsearch
+  perms:
+    image: "amstee/easy-cut-perms:${TAG}"
+    container_name: "perms"
+    expose:
+      - 8080
+    environment:
+      API_CLIENT_ID: "${API_CLIENT_ID}"
+      API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
   auth:
     image: "amstee/easy-cut-auth:${TAG}"
     container_name: "auth"
@@ -34,14 +44,24 @@ services:
     image: "amstee/easy-cut-salon:${TAG}"
     container_name: "salon"
     expose:
-    - 8080
+      - 8080
+    environment:
+      API_CLIENT_ID: "${API_CLIENT_ID}"
+      API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
+    links:
+      - auth
     depends_on:
     - elasticsearch
   barber:
     image: "amstee/easy-cut-barber:${TAG}"
     container_name: "barber"
     expose:
-    - 8080
+      - 8080
+    environment:
+      API_CLIENT_ID: "${API_CLIENT_ID}"
+      API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
+    links:
+      - auth
     depends_on:
     - elasticsearch
   elasticsearch:

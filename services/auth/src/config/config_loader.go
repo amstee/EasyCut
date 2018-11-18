@@ -12,7 +12,9 @@ type DataConfig struct {
 	Version string 		`json:"version"`
 	Port 	int			`json:"port"`
 	Origins []string	`json:"origins"`
+	Issuer string 		`json:"issuer"`
 	Jwks 	string		`json:"jwks"`
+	Perms	string		`json:"perms"`
 	Env		string		`json:"env"`
 	TPrefix string 		`json:"tprefix"`
 }
@@ -52,6 +54,8 @@ func (c *DataConfig) LoadConfig() (error) {
 	viper.AddConfigPath(".")
 	viper.SetDefault("name", "auth")
 	viper.SetDefault("port", "8080")
+	viper.SetDefault("perms", "http://perms:8080")
+	viper.SetDefault("issuer", "https://easy-cut.eu.auth0.com/")
 	viper.SetDefault("tprefix", "auth0|")
 	viper.SetDefault("version", "0.0.1")
 	viper.SetDefault("jwks", "https://easy-cut.eu.auth0.com/.well-known/jwks.json")

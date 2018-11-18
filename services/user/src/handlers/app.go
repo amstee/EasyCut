@@ -8,6 +8,8 @@ import (
 	"github.com/amstee/easy-cut/src/config"
 	"github.com/amstee/easy-cut/src/common"
 	"github.com/amstee/easy-cut/src/auth0"
+	"github.com/amstee/easy-cut/src/logger"
+	"github.com/amstee/easy-cut/src/types"
 )
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
@@ -16,7 +18,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	if userId, ok := v["user"]; ok {
 		token, err := auth0.GetToken(); if err == nil {
-			resp, err := request.ExpectJson(config.Content.GetApi() + "users/" + config.Content.TPrefix + userId,
+			resp, err := request.ExpectJson(config.Content.GetApi() + "users/" + config.Content.Api.Tprefix + userId,
 											http.MethodGet, token.Format(), nil, &result)
 			if err == nil && resp.StatusCode == 200 {
 				common.ResponseJSON(result, w, http.StatusOK); return
@@ -37,9 +39,10 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		token, err := auth0.GetToken()
 		if err == nil {
 			if err := common.DecodeJSON(&user, r); err == nil {
-				resp, err := request.ExpectJson(config.Content.GetApi() + "users/" + config.Content.TPrefix + userId,
+				resp, err := request.ExpectJson(config.Content.GetApi() + "users/" + config.Content.Api.Tprefix + userId,
 												http.MethodPatch, token.Format(), user, &result)
 				if err == nil && resp.StatusCode == http.StatusOK {
+					logger.Info.Println("Updated user: ", userId, "with", user)
 					common.ResponseJSON(result, w, http.StatusOK); return
 				}
 				common.ResponseError("unable to update user", err, w, http.StatusInternalServerError); return
@@ -66,7 +69,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		common.ResponseError("unable to create user", err, w, http.StatusInternalServerError); return
 	}
-	common.ResponseJSON(result, w, resp.StatusCode)
+	resp, err = request.ExpectJson(config.GetServiceURL("perms") + "/update/" + result.UserId[6:],
+									"PUT", token.Format(), types.CreateGroup("User", false), nil)
+	if err == nil && request.IsValid(resp.StatusCode) {
+		logger.Info.Println("Created user: ", result)
+		common.ResponseJSON(result, w, resp.StatusCode); return
+	}
+	common.ResponseError("failed to add group to user", err, w, http.StatusInternalServerError); return
 }
 
 func ListUsers(w http.ResponseWriter, r *http.Request) {

@@ -9,6 +9,8 @@ import (
 	"github.com/amstee/easy-cut/src/request"
 	"github.com/amstee/easy-cut/src/config"
 	"github.com/amstee/easy-cut/src/types"
+	"github.com/amstee/easy-cut/src/logger"
+	"github.com/amstee/easy-cut/src/auth0"
 )
 
 func CreateBarber(w http.ResponseWriter, r *http.Request) {
@@ -16,6 +18,9 @@ func CreateBarber(w http.ResponseWriter, r *http.Request) {
 	result := vars.BarberResponse{}
 	v := mux.Vars(r)
 
+	authToken, err := auth0.GetToken(); if err != nil {
+		common.ResponseError("unable to retrieve api token", err, w, http.StatusBadRequest); return
+	}
 	userId, ok := v["user"]; if ok {
 		token, err := common.GetBearer(r); if err == nil {
 			err = common.DecodeJSON(&result.Barber, r); if err == nil {
@@ -23,7 +28,13 @@ func CreateBarber(w http.ResponseWriter, r *http.Request) {
 					http.MethodPut, "Bearer " + token, role, &result.User)
 				if err == nil && resp.StatusCode == http.StatusOK {
 					err = core.CreateBarber(&result.Barber, userId); if err == nil {
-						common.ResponseJSON(result, w, http.StatusCreated); return
+						resp, err = request.ExpectJson(config.GetServiceURL("perms") + "/update/" + userId,
+							"PUT", authToken.Format(), types.CreateGroup("Barber", false), nil)
+						if err == nil && request.IsValid(resp.StatusCode) {
+							logger.Info.Println("Created barber: ", userId)
+							common.ResponseJSON(result, w, http.StatusCreated); return
+						}
+						common.ResponseError("failed to add group to barber", err, w, http.StatusInternalServerError); return
 					}
 					common.ResponseError("unable to save barber's data", err, w, http.StatusInternalServerError); return
 				}
@@ -95,6 +106,7 @@ func UpdateBarber(w http.ResponseWriter, r *http.Request) {
 	userId, ok := v["user"]; if ok {
 		err := common.DecodeJSON(&barberUpdate, r); if err == nil {
 			err = core.UpdateBarber(&barberUpdate, userId); if err == nil {
+				logger.Info.Println("Updated barber: ", userId)
 				common.ResponseJSON(barberUpdate, w, http.StatusOK); return
 			}
 			common.ResponseError("unable to update barber", err, w, http.StatusInternalServerError); return
@@ -109,6 +121,7 @@ func DeleteBarber(w http.ResponseWriter, r *http.Request) {
 
 	userId, ok := v["user"]; if ok {
 		err := core.DeleteBarber(userId); if err == nil {
+			logger.Info.Println("Deleted barber: ", userId)
 			common.ResponseJSON(types.HttpMessage{Message: "Barber deleted"}, w, http.StatusOK); return
 		}
 		common.ResponseError("unable to delete barber", err, w, http.StatusInternalServerError); return

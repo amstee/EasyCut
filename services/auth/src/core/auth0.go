@@ -4,11 +4,12 @@ import (
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
 	"errors"
-	"fmt"
 	"strings"
 	"github.com/amstee/easy-cut/services/auth/src/vars"
 	"net/http"
 	"encoding/json"
+	"github.com/amstee/easy-cut/services/auth/src/config"
+	"github.com/amstee/easy-cut/src/logger"
 )
 
 func GetJwtMiddleware() (* jwtmiddleware.JWTMiddleware, error) {
@@ -64,7 +65,7 @@ func GetPermissionClaims(tokenString string) (*vars.PermissionClaims, error) {
 
 func CheckScope(scope string, tokenString string) (bool) {
 	claims, err := GetPermissionClaims(tokenString); if err != nil {
-		fmt.Println(err)
+		logger.Error.Println(err)
 		return false
 	}
 	result := strings.Split(claims.Scope, " ")
@@ -76,7 +77,7 @@ func CheckScope(scope string, tokenString string) (bool) {
 	return false
 }
 
-func GetUser(tokenString string) (string, error) {
+func GetClaims(tokenString string) (*jwt.StandardClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
 		cert, err := GetCertificate(token); if err != nil {
 			return nil, err
@@ -84,34 +85,48 @@ func GetUser(tokenString string) (string, error) {
 		result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
 		return result, nil
 	}); if err != nil {
-		return "", err
+		return nil, err
 	}
 	claims, ok := token.Claims.(*jwt.StandardClaims); if ok && token.Valid {
-		return claims.Subject, nil
+		return claims, nil
 	}
-	return "", errors.New("unable to extract claims")
+	return nil, errors.New("unable to extract claims")
 }
 
 func GetUserGroups(tokenInfo *vars.TokenInfo) ([]string, error) {
-	var userGroup vars.UserGroups
-	userId, err := GetUser(tokenInfo.Token); if err != nil {
-		return nil, err
-	}
-	url := "https://easy-cut.eu.auth0.com/api/v2/users/" + userId
-	req, err := http.NewRequest("GET", url, nil); if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Authorization", "Bearer " + tokenInfo.Token)
-	client := &http.Client{}
-	resp, err := client.Do(req); if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+	var userGroups []vars.UserGroup
+	var res []string
 
-	err = json.NewDecoder(resp.Body).Decode(&userGroup); if err != nil {
+	claims, err := GetClaims(tokenInfo.Token); if err != nil {
 		return nil, err
 	}
-	return userGroup.AppMetadata.Authorization.Groups, nil
+	if config.Content.TPrefix == claims.Subject[:6] {
+		url := config.Content.Perms + "/get/" + claims.Subject[6:]
+
+		req, err := http.NewRequest("GET", url, nil); if err != nil {
+			return nil, err
+		}
+		req.Header.Add("Authorization", "Bearer " + tokenInfo.Token)
+		client := &http.Client{}
+		resp, err := client.Do(req); if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+
+		err = json.NewDecoder(resp.Body).Decode(&userGroups); if err != nil {
+			return nil, err
+		}
+		for _, group := range userGroups {
+			res = append(res, group.Name)
+		}
+		return res, nil
+	} else {
+		if claims.Issuer == config.Content.Issuer {
+			return []string{"Service"}, nil
+		} else {
+			return nil, errors.New("token issuer unknown")
+		}
+	}
 }
 
 func CheckGroups(groups []string, tokenString string) (*vars.GroupsResponse, error) {
@@ -125,7 +140,7 @@ func CheckGroups(groups []string, tokenString string) (*vars.GroupsResponse, err
 	for _, group := range groups {
 		isInGroup = false
 		for _, userGroup := range userGroups {
-			if group == userGroup {
+			if group == userGroup || userGroup == "Service" { // Service bypass every groups
 				isInGroup = true
 			}
 		}

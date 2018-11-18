@@ -13,3 +13,7 @@ func UpdateDoc(index string, itype string, id string, update interface{}) (*elas
 	}
 	return resp, Flush(index)
 }
+
+func InitUpdate(index string, itype string, id string) *elastic.UpdateService {
+	return Client.Update().Index(index).Type(itype).Id(id)
+}

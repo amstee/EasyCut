@@ -6,14 +6,13 @@ import (
 	"strings"
 	"errors"
 	"bytes"
-	"fmt"
 	"github.com/amstee/easy-cut/src/logger"
 	"github.com/amstee/easy-cut/src/types"
 )
 
 func JsonToReader(data interface{}) (*bytes.Buffer, error) {
 	jsonData, err := json.Marshal(data); if err != nil {
-		fmt.Println(err)
+		logger.Error.Println(err)
 		return nil, err
 	}
 	return bytes.NewBuffer(jsonData), nil

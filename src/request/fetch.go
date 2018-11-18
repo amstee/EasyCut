@@ -8,13 +8,20 @@ import (
 	"github.com/amstee/easy-cut/src/logger"
 )
 
+
+func IsValid(status int) bool {
+	return status >= 200 && status < 300
+}
+
 func FetchJson(req *http.Request, res interface{}) (*http.Response, error) {
 	client := &http.Client{}
 
+	DisplayRequest(req)
 	resp, err := client.Do(req); if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	DisplayResponse(resp)
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		if res != nil {
 			err = json.NewDecoder(resp.Body).Decode(res); if err != nil {

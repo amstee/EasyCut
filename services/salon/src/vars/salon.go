@@ -18,6 +18,17 @@ type Salon struct {
 	Updated string 		`json:"updated,omitempty"`
 }
 
+type UpdateSalon struct {
+	UserId string 		`json:"user_id,omitempty"`
+	Name string 		`json:"name,omitempty"`
+	Address string 		`json:"address,omitempty"`
+	EmployeeNumber int 	`json:"employee_number,omitempty"`
+	Website string 		`json:"website,omitempty"`
+	Barber []string 	`json:"barbers,omitempty"`
+	Created string 		`json:"created,omitempty"`
+	Updated string 		`json:"updated,omitempty"`
+}
+
 type ExtractQuery struct {
 	Address string 			`json:"address,omitempty"`
 	ExactAddress bool 		`json:"exact,omitempty"`

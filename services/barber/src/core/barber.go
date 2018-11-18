@@ -64,7 +64,7 @@ func FindBarbers(barbers map[string]*vars.BarberResponse) error {
 	} else {
 		query = elastic.NewTermsQuery("_id", users)
 	}
-	result, err := es.Search("barber", query, "", false, -1)
+	result, err := es.Search("barber", query, "", false, -1, 200)
 	if err != nil {
 		return err
 	}

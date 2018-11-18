@@ -34,11 +34,15 @@ func ResponseError(data interface{}, w http.ResponseWriter, statusCode int) {
 func RequestGroups(token string, permissions GroupsQuery, complement string) (*GroupsResponse, error) {
 	var result GroupsResponse
 	client := &http.Client{}
+	route := "/secure/groups"
 
 	jsonData, err := json.Marshal(permissions); if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", config.GetServiceURL("security") + "/secure/groups" + complement,
+	if complement != "" {
+		route = "/secure/match"
+	}
+	req, err := http.NewRequest("POST", config.GetServiceURL("security") + route + complement,
 								bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, err
@@ -65,43 +69,31 @@ func GetSecurityMiddleware() (mux.MiddlewareFunc) {
 			user := ""
 			route := mux.CurrentRoute(r)
 			cr, err := route.GetPathTemplate(); if err != nil {
-				ResponseError(types.HttpMessage{Message: "cannot get path template", Success: false},
-								w, http.StatusInternalServerError)
-				return
+				common.ResponseError("Invalid request", err, w, http.StatusBadRequest); return
 			}
 			for _, perm := range config.Content.Routes {
 				match, err := regexp.MatchString(perm.Route, cr); if err != nil {
-					ResponseError(types.HttpMessage{Message: "invalid route referenced in config file", Success: false},
-						w, http.StatusInternalServerError)
-					return
+					common.ResponseError("Error in config file", err, w, http.StatusInternalServerError); return
 				}
 				if match {
 					if len(perm.Permissions) != 0 {
 						token, err := common.GetBearer(r); if err != nil {
-							ResponseError(types.HttpMessage{Message: "cannot find token", Success: false},
-											w, http.StatusBadRequest)
-							return
+							common.ResponseError("token missing", err, w, http.StatusBadRequest); return
 						}
-						if perm.MatchUser {
+						if perm.Match {
 							v := mux.Vars(r)
 							tmp, ok := v["user"]; if !ok {
-								ResponseError(types.HttpMessage{Message: "cannot find user", Success: false},
-												w, http.StatusBadRequest)
-								return
+								common.ResponseError("user missing", nil, w, http.StatusBadRequest); return
 							}
 							user =  "/" + tmp
 						}
 						groups, err := RequestGroups(token, GroupsQuery{Groups: perm.Permissions}, user)
 						if err != nil {
-							ResponseError(types.HttpMessage{Message: "cannot retrieve permissions", Success: false},
-											w, http.StatusInternalServerError)
-							return
+							common.ResponseError("cannot retrieve permissions", err, w, http.StatusInternalServerError); return
 						}
 						for _, v := range groups.Groups {
 							if !v {
-								ResponseError(types.HttpMessage{Message: "cannot retrieve permissions", Success: false},
-												w, http.StatusForbidden)
-								return
+								common.ResponseError("insufficient permissions", err, w, http.StatusInternalServerError); return
 							}
 						}
 					}

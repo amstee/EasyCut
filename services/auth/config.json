@@ -1,8 +1,10 @@
 {
   "name": "auth",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "port": 8080,
   "tprefix": "auth0|",
+  "issuer": "https://easy-cut.eu.auth0.com/",
+  "perms": "http://perms:8080",
   "origins": [
     "http://easy-cut.ovh",
     "https://easy-cut.ovh",

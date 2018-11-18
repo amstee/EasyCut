@@ -8,11 +8,10 @@ type UserCreation struct {
 	Password string						`json:"password"`
 	EVerified bool						`json:"email_verified"`
 	VerifyEmail	bool					`json:"verify_email"`
-	Metadata common.AppMetadata			`json:"app_metadata"`
 	UserMetadata common.UserMetadata 	`json:"user_metadata"`
 }
 
 type UserUpdate struct {
 	Email string						`json:"email,omitempty"`
-	UserMetadata common.UserMetadata	`json:"user_metadata"`
+	UserMetadata common.UserMetadata	`json:"user_metadata,omitempty"`
 }

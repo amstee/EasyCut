@@ -8,6 +8,16 @@ import (
 	"github.com/amstee/easy-cut/src/logger"
 )
 
+func UpdateSalon(salon vars.UpdateSalon, salonId string) error {
+	err := FindSalon(nil, salonId); if err != nil {
+		return errors.New("this salon does not exist")
+	}
+	_, err = es.UpdateDoc("salon", "salon", salonId, salon); if err != nil {
+		return err
+	}
+	return nil
+}
+
 func CreateSalon(salon *vars.Salon) error {
 	resp, err := es.Index("salon", "salon", salon); if err != nil {
 		return err
@@ -33,7 +43,7 @@ func FindSalon(salon *vars.Salon, salonId string) error {
 func FindSalons(extract vars.ExtractQuery) (*[]vars.Salon, error) {
 	var salons []vars.Salon
 	query := extract.ConstructQuery()
-	result, err := es.Search("salon", query, "", false, -1)
+	result, err := es.Search("salon", query, "", false, -1, 50)
 	if err != nil {
 		return nil, err
 	}
@@ -51,4 +61,16 @@ func FindSalons(extract vars.ExtractQuery) (*[]vars.Salon, error) {
 		return &salons, nil
 	}
 	return nil, errors.New("0 results")
+}
+
+func DeleteSalon(salonId string, check bool) error {
+	if check {
+		err := FindSalon(nil, salonId); if err != nil {
+			return errors.New("this salon does not exist")
+		}
+	}
+	_, err := es.DeleteDoc("salon", "salon", salonId); if err != nil {
+		return err
+	}
+	return nil
 }

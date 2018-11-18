@@ -4,7 +4,7 @@
 
 This service allow easy cut services or any other third party to validate a easy cut user connection and permissions.
 
-It exposes four different endpoints :
+It exposes six different endpoints :
 
 ## Service status
 
@@ -144,6 +144,52 @@ Allow to check easy-cut users groups
     "success": false
 }
 ```
+
+## Match & Groups
+
+Allow to check easy-cut users groups and verify that the user match its token
+
+#### Route `/auth/secure/match/{user}`
+
+#### Type : `POST`
+
+#### Headers :
+
+```json
+{
+  "Authorization": "Bearer [...token]"
+}
+```
+
+#### Body :
+
+```json
+{
+	"groups": ["Admin", "User", "Barber", "..."]
+}
+```
+
+#### Response on success :
+
+```json
+{
+  "groups": {
+    "Admin": false,
+    "User": true,
+    "Barber": false
+  }
+}
+```
+
+#### Response on error :
+
+```json
+{
+    "message": "error description",
+    "success": false
+}
+```
+
 
 ## Extract
 

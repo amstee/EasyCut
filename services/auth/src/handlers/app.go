@@ -88,7 +88,7 @@ func GroupsAndMatch(w http.ResponseWriter, r *http.Request) {
 			}
 			common.ResponseJSON(resp, w, 200); return
 		}
-		common.ResponseError("unable to update user", nil, w, http.StatusForbidden); return
+		common.ResponseError("token doesnt match user", nil, w, http.StatusForbidden); return
 	}
 	common.ResponseError("user not found", nil, w, http.StatusBadRequest)
 }
@@ -101,7 +101,6 @@ func Permissions(w http.ResponseWriter, r *http.Request) {
 	token, err := common.GetBearer(r); if err != nil {
 		common.ResponseError("unable to retrieve token", err, w, http.StatusBadRequest); return
 	}
-
 	err = common.DecodeJSON(&perms, r); if err != nil {
 		common.ResponseError("unable to decode body", err, w, http.StatusBadRequest); return
 	}
@@ -118,7 +117,7 @@ func SetAuthenticationRoutes(router *mux.Router) {
 
 func SetAuthenticatedRoutes(router *mux.Router) {
 	router.HandleFunc("/permissions", Permissions).Methods("POST")
-	router.HandleFunc("/groups/{user}", GroupsAndMatch).Methods("POST")
+	router.HandleFunc("/match/{user}", GroupsAndMatch).Methods("POST")
 	router.HandleFunc("/groups", Groups).Methods("POST")
 	router.HandleFunc("/extract", ExtractToken).Methods("GET")
 }

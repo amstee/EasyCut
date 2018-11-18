@@ -11,7 +11,7 @@ import (
 )
 
 type Permission struct {
-	MatchUser bool			`json:"match_user"`
+	Match bool				`json:"match"`
 	Route string			`json:"route"`
 	Permissions []string	`json:"permissions"`
 }
@@ -26,22 +26,42 @@ type Service struct {
 	Url string 			`json:"url"`
 }
 
+type OAuth struct {
+	Use bool 			`json:"use"`
+	Audience string 	`json:"audience"`
+	Domain string 		`json:"domain"`
+	Extension string 	`json:"extension"`
+}
+
+type Api struct {
+	Use bool 			`json:"use"`
+	Domain string 		`json:"domain"`
+	Extension string 	`json:"extension"`
+	Tprefix string 		`json:"tprefix"`
+}
+
 type DataConfig struct {
 	Auth0 bool 			`json:"auth0"`
 	Version string 		`json:"version"`
 	Name string 		`json:"name"`
 	Port int			`json:"port"`
-	TPrefix string 		`json:"tprefix"`
 	Env	string			`json:"env"`
-	Api	string			`json:"api"`
-	Domain string		`json:"domain"`
-	Oauth string		`json:"oauth"`
 	Sfile string		`json:"sfile"`
 	ClientId string		`json:"client_id"`
 	ClientSecret string	`json:"client_secret"`
 	Origins []string	`json:"origins"`
+	Oauth OAuth  		`json:"oauth"`
+	Api Api 			`json:"api"`
 	Services []Service 	`json:"services"`
 	Routes []Permission	`json:"routes"`
+}
+
+func GetOauth() string {
+	return Content.GetOauth()
+}
+
+func (c *DataConfig) GetOauth() string {
+	return c.Oauth.Domain + c.Oauth.Extension
 }
 
 func GetApi() string {
@@ -49,7 +69,7 @@ func GetApi() string {
 }
 
 func (c *DataConfig) GetApi() string {
-	return c.Domain + c.Api
+	return c.Api.Domain + c.Api.Extension
 }
 
 func Display() {
@@ -62,11 +82,17 @@ func (c *DataConfig) Display() {
 	fmt.Println("Service -------- " + c.Name + " Version : " + c.Version + " --------")
 	fmt.Printf("\tPort =\t\t%d\n", c.Port)
 	fmt.Printf("\tEnvironment =\t%s\n", c.Env)
-	fmt.Println("Auth0 configuration :")
-	fmt.Printf("\tApi url =\t%s\n", c.Api)
-	fmt.Printf("\tBearer prefix =\t%s\n", c.TPrefix)
-	fmt.Printf("\tOauth url =\t%s\n", c.Oauth)
-	fmt.Printf("\tDomain url =\t%s\n", c.Domain)
+	if c.Oauth.Use {
+		fmt.Println("Oauth configuration :")
+		fmt.Printf("\tOauth domain =\t%s\n", c.Oauth.Domain)
+		fmt.Printf("\tOauth extension =\t%s\n", c.Oauth.Extension)
+	}
+	if c.Api.Use {
+		fmt.Println("Api configuration :")
+		fmt.Printf("\tApi domain =\t%s\n", c.Api.Domain)
+		fmt.Printf("\tApi extension =\t%s\n", c.Api.Extension)
+		fmt.Printf("\tApi Bearer prefix =\t%s\n", c.Api.Tprefix)
+	}
 	fmt.Println("CORS :")
 	for i, o := range c.Origins {
 		fmt.Printf("\tOrigin %d is %s\n", i, o)
@@ -125,11 +151,11 @@ func (c *DataConfig) LoadSecrets() (error) {
 	return nil
 }
 
-func LoadEnv() (error) {
-	return Content.LoadEnv()
+func LoadEnv(OauthEnvPrefix string) (error) {
+	return Content.LoadEnv(OauthEnvPrefix)
 }
 
-func (c *DataConfig) LoadEnv() (error) {
+func (c *DataConfig) LoadEnv(OauthEnvPrefix string) (error) {
 	if port := os.Getenv("EASY_CUT_PORT"); port != "" {
 		p, err := strconv.Atoi(port); if err != nil {
 			return err
@@ -145,26 +171,26 @@ func (c *DataConfig) LoadEnv() (error) {
 	if env := os.Getenv("EASY_CUT_ENV"); env != "" {
 		c.Env = env
 	}
-	if c.Auth0 {
-		if clientId := os.Getenv("API_CLIENT_ID"); clientId != "" {
+	if c.Oauth.Use {
+		if clientId := os.Getenv(OauthEnvPrefix + "_ID"); clientId != "" {
 			c.ClientId = clientId
 		} else {
-			fmt.Println("Warning : API_CLIENT_ID not set in environment")
+			fmt.Println("Warning : Oauth client ID not set in environment")
 		}
-		if clientSecret := os.Getenv("API_CLIENT_SECRET"); clientSecret != "" {
+		if clientSecret := os.Getenv(OauthEnvPrefix + "_SECRET"); clientSecret != "" {
 			c.ClientSecret = clientSecret
 		} else {
-			fmt.Println("Warning : API_CLIENT_SECRET not set in environment")
+			fmt.Println("Warning : Oauth client SECRET not set in environment")
 		}
 	}
 	return nil
 }
 
-func Load() (error) {
-	return Content.LoadConfig()
+func Load(OauthEnvPrefix string) (error) {
+	return Content.LoadConfig(OauthEnvPrefix)
 }
 
-func (c *DataConfig) LoadConfig() (error) {
+func (c *DataConfig) LoadConfig(OauthEnvPrefix string) (error) {
 	viper.SetConfigFile("config.json")
 	viper.AddConfigPath(".")
 	viper.SetDefault("port", "8080")
@@ -189,7 +215,7 @@ func (c *DataConfig) LoadConfig() (error) {
 			return err
 		}
 	}
-	return c.LoadEnv()
+	return c.LoadEnv(OauthEnvPrefix)
 }
 
 var Content = new(DataConfig)

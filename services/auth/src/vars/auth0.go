@@ -4,12 +4,11 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-type UserGroups struct {
-	AppMetadata struct{
-		Authorization struct {
-			Groups []string	`json:"groups"`
-		}	`json:"authorization"`
-	}	`json:"app_metadata"`
+type UserGroup struct {
+	Id string 			`json:"_id"`
+	Name string 		`json:"name"`
+	Description string 	`json:"description"`
+	Members []string 	`json:"members,omitempty"`
 }
 
 type GroupClaims struct {
