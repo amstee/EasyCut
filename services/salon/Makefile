@@ -1,6 +1,6 @@
 os = linux
 TAG ?= latest
-SERVICE ?= salon
+SERVICE ?= rating
 
 guard-%:
 	@ if [ "${${*}}" = "" ]; then \

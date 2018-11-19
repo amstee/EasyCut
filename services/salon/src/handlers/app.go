@@ -22,7 +22,7 @@ func CreateSalon(w http.ResponseWriter, r *http.Request) {
 		err = common.DecodeJSON(&data, r); if err == nil {
 			resp, err := request.ExpectJson(config.GetServiceURL("security") + "/secure/extract?user=true",
 											http.MethodGet, "Bearer " + token, nil, &extract)
-			if err == nil && resp.StatusCode == http.StatusOK {
+			if err == nil && request.IsValid(resp.StatusCode) {
 				token, err := auth0.GetToken(); if err != nil {
 					common.ResponseError("failed to retrieve api token", err, w, http.StatusInternalServerError); return
 				}
@@ -32,7 +32,7 @@ func CreateSalon(w http.ResponseWriter, r *http.Request) {
 					data.UserId = extract.UserId
 					err = core.CreateSalon(&data); if err == nil {
 						logger.Info.Println("Created salon: ", data.Id, " User:", extract.UserId)
-						common.ResponseJSON(data, w, http.StatusOK); return
+						common.ResponseJSON(data, w, http.StatusCreated); return
 					}
 					common.ResponseError("failed to save salon", err, w, http.StatusInternalServerError); return
 				}

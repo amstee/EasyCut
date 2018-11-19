@@ -67,7 +67,7 @@ For more details about these endpoints check the [Barber service](barber/README.
 
 ## Salon
 
-This service allow third parties manipulate easy cut salons, with this service you can create, update, ... salons.
+This service allow third parties to manipulate easy cut salons, with this service you can create, update, ... salons.
 
 A salon is linked to a user, meaning this user is the manager.
 
@@ -82,10 +82,24 @@ This services exposes six different endpoints for salons management :
 
 For more details about these endpoints check the [Salon service](salon/README.md)
 
+## Rating
+
+This service allow third parties to rate barbers, salons and appointments
+
+A rating is linked to either a user, a salon or an appointment.
+
+This service exposes six different endpoints for ratings management :
+
+* Server status : `GET /rating/status`
+* Create salon : `POST /rating/rate`
+* Get salon `GET /rating/get/{rating}`
+* List salons : `GET /rating/list`
+* Update salon : `PUT /rating/update/{rating}`
+* Delete salon : `DELETE /rating/delete/{rating}`
+
+For more details about these endpoints check the [Rating service](rating/README.md)
+
 ## Appointment
 
 To be developed
 
-## Rating
-
-To be developed

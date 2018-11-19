@@ -1,5 +1,7 @@
 # Perms
 
+[Previous page](../README.md)
+
 This service allow to manage easy cut users permissions
 
 It exposes three different endpoints :

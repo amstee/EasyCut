@@ -1,0 +1,60 @@
+{
+  "name": "rating",
+  "version": "0.0.1",
+  "port": 8080,
+  "origins": [
+    "http://easy-cut.ovh",
+    "https://easy-cut.ovh",
+    "http://localhost"
+  ],
+  "oauth": {
+    "use": false
+  },
+  "api": {
+    "use": false
+  },
+  "services": [
+    {
+      "name": "security",
+      "url": "http://auth:8080"
+    },
+    {
+      "name": "user",
+      "url": "http://user:8080"
+    },
+    {
+      "name": "elasticsearch",
+      "url": "http://elasticsearch:9200"
+    },
+    {
+      "name": "perms",
+      "url": "http://perms:8080"
+    }
+  ],
+  "routes": [
+    {
+      "route": "/status",
+      "permissions": []
+    },
+    {
+      "route": "/rate",
+      "permissions": ["User"]
+    },
+    {
+      "route": "/get.*",
+      "permissions": ["User"]
+    },
+    {
+      "route": "/list",
+      "permissions": ["User"]
+    },
+    {
+      "route": "/delete.*",
+      "permissions": ["User"]
+    },
+    {
+      "route": "/update.*",
+      "permissions": ["User"]
+    }
+  ]
+}
