@@ -91,15 +91,27 @@ A rating is linked to either a user, a salon or an appointment.
 This service exposes six different endpoints for ratings management :
 
 * Server status : `GET /rating/status`
-* Create salon : `POST /rating/rate`
-* Get salon `GET /rating/get/{rating}`
-* List salons : `GET /rating/list`
-* Update salon : `PUT /rating/update/{rating}`
-* Delete salon : `DELETE /rating/delete/{rating}`
+* Create rating : `POST /rating/rate`
+* Get rating `GET /rating/get/{rating}`
+* List ratings : `GET /rating/list`
+* Update rating : `PUT /rating/update/{rating}`
+* Delete rating : `DELETE /rating/delete/{rating}`
 
 For more details about these endpoints check the [Rating service](rating/README.md)
 
 ## Appointment
 
-To be developed
+This service allow third parties to create appointments
 
+An appointment is linked to two users.
+
+This service exposes six different endpoints for appointments management :
+
+* Server status : `GET /appointment/status`
+* Create appointment : `POST /appointment/schedule`
+* Get appointment `GET /appointment/get/{appointment}`
+* List appointments : `GET /appointment/list`
+* Update appointment : `PUT /appointment/update/{appointment}`
+* Delete appointment : `DELETE /appointment/delete/{appointment}`
+
+For more details about these endpoints check the [Appointment service](appointment/README.md)

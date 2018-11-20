@@ -1,6 +1,6 @@
 {
-  "name": "rating",
-  "version": "0.1.0",
+  "name": "appointment",
+  "version": "1.0.0",
   "port": 8080,
   "origins": [
     "http://easy-cut.ovh",
@@ -23,6 +23,10 @@
       "url": "http://user:8080"
     },
     {
+      "name": "barber",
+      "url": "http://barber:8080"
+    },
+    {
       "name": "elasticsearch",
       "url": "http://elasticsearch:9200"
     },
@@ -37,7 +41,7 @@
       "permissions": []
     },
     {
-      "route": "/rate",
+      "route": "/schedule",
       "permissions": ["User"]
     },
     {

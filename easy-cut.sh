@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-services=( appointment auth barber rating salon user group )
+services=( appointment auth barber rating salon user perms )
 k8conf=( "configmap/auth0.yml" "configmap/nginx.yml" "configmap/ssl.yml" )
 k8=( "auth.yml" "user.yml" "nginx.yml" "load-balancer.yml" )
 
@@ -40,7 +40,7 @@ if [ $1 = "dependencies" ]; then
     exit
 fi
 
-if [[ -z "${TAG}" ]]; then
+if [ -z "${TAG}" ]; then
     TAG="latest"
     echo "TAG not found in environment --> setting to default value : latest"
 fi
@@ -84,6 +84,7 @@ if [ $1 = "clean" ]; then
     do
         cd ${i}/
         make clean
+        cd ..
     done
     echo "Cleaning done"
 fi
@@ -93,7 +94,8 @@ if [ $1 = "release" ]; then
     for i in "${services[@]}"
     do
         cd ${i}/
-        make release SERVICE=${i}
+        SERVICE=${i} make release
+        cd ..
     done
     echo "Release of all services done"
 fi
@@ -103,7 +105,8 @@ if [ $1 = "build" ]; then
     for i in "${services[@]}"
     do
         cd ${i}/
-        make build SERVICE=${i} TAG="${TAG}"
+        TAG="${TAG}" SERVICE=${i} make build
+        cd ..
     done
     echo "Build of all services done"
 fi
@@ -114,6 +117,7 @@ if [ $1 = "push" ]; then
     do
         cd ${i}/
         make push SERVICE=${i} TAG="${TAG}"
+        cd ..
     done
     echo "Push of all services done"
 fi

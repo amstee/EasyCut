@@ -1,6 +1,6 @@
 os = linux
 TAG ?= latest
-SERVICE ?= default
+SERVICE := appointment
 
 guard-%:
 	@ if [ "${${*}}" = "" ]; then \

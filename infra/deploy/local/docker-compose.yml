@@ -14,6 +14,8 @@ services:
       - auth
       - user
       - perms
+      - appointment
+      - rating
       - salon
       - barber
       - elasticsearch
@@ -51,7 +53,7 @@ services:
     links:
       - auth
     depends_on:
-    - elasticsearch
+      - elasticsearch
   barber:
     image: "amstee/easy-cut-barber:${TAG}"
     container_name: "barber"
@@ -63,7 +65,25 @@ services:
     links:
       - auth
     depends_on:
-    - elasticsearch
+      - elasticsearch
+  appointment:
+    image: "amstee/easy-cut-appointment:${TAG}"
+    container_name: "appointment"
+    expose:
+      - 8080
+    links:
+      - auth
+    depends_on:
+      - elasticsearch
+  rating:
+    image: "amstee/easy-cut-rating:${TAG}"
+    container_name: "rating"
+    expose:
+      - 8080
+    links:
+      - auth
+    depends_on:
+      - elasticsearch
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
     container_name: "elastic"

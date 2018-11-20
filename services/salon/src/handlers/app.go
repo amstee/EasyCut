@@ -55,7 +55,7 @@ func GetSalon(w http.ResponseWriter, r *http.Request) {
 		}
 		common.ResponseError("salon not found", err, w, http.StatusNotFound); return
 	}
-	common.ResponseError("user not found in url", nil, w, http.StatusBadRequest)
+	common.ResponseError("salon not found in url", nil, w, http.StatusBadRequest)
 }
 
 func ListSalon(w http.ResponseWriter, r *http.Request) {

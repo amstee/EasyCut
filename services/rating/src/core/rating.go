@@ -5,6 +5,7 @@ import (
 	"github.com/amstee/easy-cut/src/es"
 	"errors"
 	"encoding/json"
+	"github.com/amstee/easy-cut/src/logger"
 )
 
 func CreateRating(rate *vars.Rating) error {
@@ -30,10 +31,29 @@ func FindRating(rate *vars.Rating, ratingId string) error {
 }
 
 func FindRatings(extract vars.ExtractQuery) (*[]vars.Rating, error) {
-	return nil, nil
+	var ratings []vars.Rating
+	query := extract.ConstructQuery()
+	result, err := es.Search("rating", query, "", false, -1, 100)
+	if err != nil {
+		return nil, err
+	}
+	if result.Hits.TotalHits > 0 {
+		for _, hit := range result.Hits.Hits {
+			var rating vars.Rating
+			rating.Id = hit.Id
+			err := json.Unmarshal(*(hit.Source), &rating)
+			if err != nil {
+				logger.Error.Println("unable to unmarshal rating if = ", hit.Id, ", raw data = ", hit)
+			} else {
+				ratings = append(ratings, rating)
+			}
+		}
+		return &ratings, nil
+	}
+	return &ratings, nil
 }
 
-func UpdateRating(rate vars.Rating, ratingId string) error {
+func UpdateRating(rate vars.UpdateRating, ratingId string) error {
 	err := FindRating(nil, ratingId); if err != nil {
 		return errors.New("this rating does not exist")
 	}

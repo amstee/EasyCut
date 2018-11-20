@@ -60,7 +60,7 @@ func FindSalons(extract vars.ExtractQuery) (*[]vars.Salon, error) {
 		}
 		return &salons, nil
 	}
-	return nil, errors.New("0 results")
+	return &salons, nil
 }
 
 func DeleteSalon(salonId string, check bool) error {

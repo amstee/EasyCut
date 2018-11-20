@@ -12,13 +12,13 @@ const SalonMapping = `
 			"salon": {
 				"properties": {
 					"user_id": {
-						"type": "string"
+						"type": "keyword"
 					},
 					"name": {
-						"type": "string"
+						"type": "keyword"
 					},
 					"address": {
-						"type": "string"
+						"type": "keyword"
 					},
 					"employee_number": {
 						"type": "integer"
@@ -27,7 +27,7 @@ const SalonMapping = `
 						"type": "array"
 					},
 					"website": {
-						"type": "string"
+						"type": "keyword"
 					},
 					"created": {
 						"type": "date"

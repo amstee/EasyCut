@@ -2,29 +2,29 @@ package vars
 
 import "github.com/amstee/easy-cut/src/es"
 
-const RatingMapping = `
+const AppointmentMapping = `
 	{
 		"settings": {
 			"number_of_shards": 2,
 			"number_of_replicas": 1
 		},
 		"mappings": {
-			"rating": {
+			"appointment": {
 				"properties": {
-					"stars": {
-						"type": "integer"
-					},
 					"user_id": {
 						"type": "keyword"
 					},
-					"target_id": {
+					"barber_id": {
 						"type": "keyword"
 					},
-					"target_type": {
+					"date": {
+						"type": "date"
+					},
+					"description": {
 						"type": "keyword"
 					},
-					"comment": {
-						"type": "keyword"
+					"duration": {
+						"type": "integer"
 					},
 					"created": {
 						"type": "date"
@@ -40,5 +40,5 @@ const RatingMapping = `
 
 
 func Register() error {
-	return es.RegisterIndex("rating", RatingMapping)
+	return es.RegisterIndex("appointment", AppointmentMapping)
 }
