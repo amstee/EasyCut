@@ -481,7 +481,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost/user/get/{{USER_ID}}",
+							"raw": "http://localhost/user/get/5bf1daec5a00af2219dcb604",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -489,7 +489,7 @@
 							"path": [
 								"user",
 								"get",
-								"{{USER_ID}}"
+								"5bf1daec5a00af2219dcb604"
 							]
 						}
 					},
@@ -1204,6 +1204,430 @@
 								"perms",
 								"update",
 								"{{USER_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get groups",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://localhost/perms/get/{{USER_ID}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"perms",
+								"get",
+								"{{USER_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rating",
+			"item": [
+				{
+					"name": "Create Rating",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"salon\": \"8DRHJGcBp5MuIIOhnw9a\",\n\t\"comment\": \"ca pue\",\n\t\"stars\": 1\n}"
+						},
+						"url": {
+							"raw": "https://localhost/rating/rate",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"rating",
+								"rate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rating",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://localhost/rating/get/I7kRM2cBMZGHGLoSAGfI",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"rating",
+								"get",
+								"I7kRM2cBMZGHGLoSAGfI"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Rating",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://localhost/rating/delete/UrMLM2cBqqjuVY7coyEO",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"rating",
+								"delete",
+								"UrMLM2cBqqjuVY7coyEO"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Ratings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://localhost/rating/list?target_id=8DRHJGcBp5MuIIOhnw9a&target_type=salon",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"rating",
+								"list"
+							],
+							"query": [
+								{
+									"key": "target_id",
+									"value": "8DRHJGcBp5MuIIOhnw9a"
+								},
+								{
+									"key": "target_type",
+									"value": "salon"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Rating",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"comment\": \"en fait ca tue\",\n\t\"stars\": 5\n}"
+						},
+						"url": {
+							"raw": "https://localhost/rating/update/I7kRM2cBMZGHGLoSAGfI",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"rating",
+								"update",
+								"I7kRM2cBMZGHGLoSAGfI"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Appointment",
+			"item": [
+				{
+					"name": "Create Appointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"barber_id\": \"5bc49a0bb144eb017339315b\",\n\t\"date\": \"2010\",\n\t\"description\": \"on test\",\n\t\"duration\": 10\n}"
+						},
+						"url": {
+							"raw": "https://localhost/appointment/schedule",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"appointment",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Appointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://localhost/appointment/get/WlciM2cBUDht25bvGNw4",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"appointment",
+								"get",
+								"WlciM2cBUDht25bvGNw4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Appointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://localhost/appointment/delete/rWJTM2cB8SCNQCdoHSvq",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"appointment",
+								"delete",
+								"rWJTM2cB8SCNQCdoHSvq"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Appointments",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://localhost/appointment/list?barber_id=5bc49a0bb144eb017339315b",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"appointment",
+								"list"
+							],
+							"query": [
+								{
+									"key": "barber_id",
+									"value": "5bc49a0bb144eb017339315b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Appointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"date\": \"2011\",\n\t\"duration\": 110\n}"
+						},
+						"url": {
+							"raw": "https://localhost/appointment/update/WlciM2cBUDht25bvGNw4",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"appointment",
+								"update",
+								"WlciM2cBUDht25bvGNw4"
 							]
 						}
 					},
