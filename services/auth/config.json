@@ -4,6 +4,10 @@
   "port": 8080,
   "tprefix": "auth0|",
   "issuer": "https://easy-cut.eu.auth0.com/",
+  "audiences": [
+    "https://easy-cut.eu.auth0.com/api/v2/",
+    "24p5bq6sZM0zz193kSXUJvsH82yhCVXb"
+  ],
   "perms": "http://perms:8080",
   "origins": [
     "http://easy-cut.ovh",

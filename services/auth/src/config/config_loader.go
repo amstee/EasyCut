@@ -12,6 +12,7 @@ type DataConfig struct {
 	Version string 		`json:"version"`
 	Port 	int			`json:"port"`
 	Origins []string	`json:"origins"`
+	Audiences []string 	`json:"audiences"`
 	Issuer string 		`json:"issuer"`
 	Jwks 	string		`json:"jwks"`
 	Perms	string		`json:"perms"`

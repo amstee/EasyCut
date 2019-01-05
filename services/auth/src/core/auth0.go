@@ -21,16 +21,20 @@ func GetJwtMiddleware() (* jwtmiddleware.JWTMiddleware, error) {
 }
 
 func CheckTokenValidity(token *jwt.Token) (interface{}, error) {
-	aud := "https://easy-cut.eu.auth0.com/api/v2/"
-	iss := "https://easy-cut.eu.auth0.com/"
+	b := false
 
 	if token.Header["alg"] != jwt.SigningMethodRS256.Alg() {
 		return token, errors.New("invalid signature")
 	}
-	checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false); if !checkAud {
+	for _, elem := range config.Content.Audiences {
+		checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(elem, false); if checkAud {
+			b = true
+		}
+	}
+	if !b {
 		return token, errors.New("invalid audience")
 	}
-	checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(iss, false); if !checkIss {
+	checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(config.Content.Issuer, false); if !checkIss {
 		return token, errors.New("invalid issuer")
 	}
 
