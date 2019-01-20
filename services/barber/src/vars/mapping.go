@@ -11,6 +11,15 @@ const BarberMapping = `
 		"mappings": {
 			"barber": {
 				"properties": {
+					"name": {
+						"type": "keyword"
+					},
+					"address": {
+						"type": "keyword"
+					},
+					"price": {
+						"type": "integer"
+					},
 					"experience": {
 						"type": "keyword"
 					},

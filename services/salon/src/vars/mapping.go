@@ -20,6 +20,9 @@ const SalonMapping = `
 					"address": {
 						"type": "keyword"
 					},
+					"price": {
+						"type": "integer"
+					},
 					"employee_number": {
 						"type": "integer"
 					},

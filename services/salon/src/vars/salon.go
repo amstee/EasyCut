@@ -11,6 +11,7 @@ type Salon struct {
 	UserId string 		`json:"user_id"`
 	Name string 		`json:"name"`
 	Address string 		`json:"address,omitempty"`
+	Price int			`json:"price,omitempty"`
 	EmployeeNumber int 	`json:"employee_number,omitempty"`
 	Barber []string 	`json:"barbers,omitempty"`
 	Website string 		`json:"website,omitempty"`
