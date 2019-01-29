@@ -107,7 +107,7 @@ func (e *ExtractQuery) ConstructQuery() (*elastic.BoolQuery) {
 	return query
 }
 
-func (e *ExtractQuery) Load(values url.Values) error {
+func (e *ExtractQuery) Load(values url.Values, user string) error {
 	v, ok := values["user_id"]; if ok {
 		e.UserId = v[0]
 	}
@@ -122,6 +122,8 @@ func (e *ExtractQuery) Load(values url.Values) error {
 	}
 	if e.UserId == "" && e.BarberId == "" {
 		return errors.New("A user or barber must be specified")
+	} else if e.UserId != user && e.BarberId != user {
+		return errors.New("Invalid permissions")
 	}
 	return nil
 }

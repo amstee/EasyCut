@@ -6,7 +6,6 @@ import (
 	"errors"
 	"encoding/json"
 	"github.com/amstee/easy-cut/src/logger"
-	"fmt"
 )
 
 func CreateAppointment(appointment *vars.Appointment) error {
@@ -34,7 +33,6 @@ func FindAppointment(appointment *vars.Appointment, appointmentId string) error 
 func FindAppointments(extract vars.ExtractQuery) (*[]vars.Appointment, error) {
 	var appointments []vars.Appointment
 	query := extract.ConstructQuery()
-	fmt.Println(query)
 	result, err := es.Search("appointment", query, "", false, -1, 100)
 	if err != nil {
 		return nil, err

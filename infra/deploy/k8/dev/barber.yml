@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: barber-service
+  namespace: dev
+  labels:
+    app: barber
+spec:
+  selector:
+    app: barber
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  - name: http2
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: barber
+  namespace: dev
+  labels:
+    app: barber
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: barber
+  template:
+    metadata:
+      labels:
+        app: barber
+    spec:
+      containers:
+      - name: barber
+        image: amstee/easy-cut-barber:dev
+        ports:
+        - containerPort: 8080
+        env:
+        - name: API_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: auth0-api
+              key: id
+        - name: API_CLIENT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: auth0-api
+              key: secret

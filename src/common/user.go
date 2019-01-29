@@ -7,10 +7,12 @@ type AppMetadata struct {
 }
 
 type UserMetadata struct {
-	Username string 	`json:"username"`
-	Address string 		`json:"address"`
-	Phone string 		`json:"phone"`
-	Description string 	`json:"description"`
+	Username string 	`json:"username,omitempty"`
+	Address string 		`json:"address,omitempty"`
+	Phone string 		`json:"phone,omitempty"`
+	Description string 	`json:"description,omitempty"`
+	FavoriteBarbers []string 	`json:"favorite_barbers,omitempty"`
+	FavoriteSalons []string 	`json:"favorite_salons,omitempty"`
 }
 
 type Identity struct {

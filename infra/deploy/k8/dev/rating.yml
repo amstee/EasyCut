@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rating-service
+  namespace: dev
+  labels:
+    app: rating
+spec:
+  selector:
+    app: rating
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  - name: http2
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rating
+  namespace: dev
+  labels:
+    app: rating
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rating
+  template:
+    metadata:
+      labels:
+        app: rating
+    spec:
+      containers:
+      - name: rating
+        image: amstee/easy-cut-rating:dev
+        ports:
+        - containerPort: 8080
+        env:
+        - name: API_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: auth0-api
+              key: id
+        - name: API_CLIENT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: auth0-api
+              key: secret

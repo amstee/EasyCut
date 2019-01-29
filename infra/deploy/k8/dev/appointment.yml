@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: appointment-service
+  namespace: dev
+  labels:
+    app: appointment
+spec:
+  selector:
+    app: appointment
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+    - name: http2
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointment
+  namespace: dev
+  labels:
+    app: appointment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: appointment
+  template:
+    metadata:
+      labels:
+        app: appointment
+    spec:
+      containers:
+      - name: appointment
+        image: amstee/easy-cut-appointment:dev
+        ports:
+        - containerPort: 8080
+        env:
+          - name: API_CLIENT_ID
+            valueFrom:
+              configMapKeyRef:
+                name: auth0-api
+                key: id
+          - name: API_CLIENT_SECRET
+            valueFrom:
+              configMapKeyRef:
+                name: auth0-api
+                key: secret

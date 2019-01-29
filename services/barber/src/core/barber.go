@@ -54,7 +54,7 @@ func FindBarber(barber *vars.Barber, usedId string) error {
 
 func FindBarbers(barbers map[string]*vars.BarberResponse) error {
 	var query elastic.Query
-	var users []string
+	var users []interface{}
 
 	for k := range barbers {
 		users = append(users, k)
@@ -62,7 +62,7 @@ func FindBarbers(barbers map[string]*vars.BarberResponse) error {
 	if len(users) == 1 {
 		query = elastic.NewTermQuery("_id", users[0])
 	} else {
-		query = elastic.NewTermsQuery("_id", users)
+		query = elastic.NewTermsQuery("_id", users...)
 	}
 	result, err := es.Search("barber", query, "", false, -1, 200)
 	if err != nil {

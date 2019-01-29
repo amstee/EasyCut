@@ -85,3 +85,66 @@ services:
     environment:
       API_CLIENT_ID: "${API_CLIENT_ID}"
       API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
+  perms:
+    image: "amstee/easy-cut-perms:${TAG}"
+    deploy:
+      replicas: 2
+    links:
+    - auth
+    networks:
+    - services
+    environment:
+      API_CLIENT_ID: "${API_CLIENT_ID}"
+      API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
+  rating:
+    image: "amstee/easy-cut-rating:${TAG}"
+    deploy:
+      replicas: 2
+    links:
+    - auth
+    networks:
+    - services
+    - esnet
+    environment:
+      API_CLIENT_ID: "${API_CLIENT_ID}"
+      API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
+  appointment:
+    image: "amstee/easy-cut-appointment:${TAG}"
+    deploy:
+      replicas: 2
+    links:
+    - auth
+    networks:
+    - services
+    - esnet
+    environment:
+      API_CLIENT_ID: "${API_CLIENT_ID}"
+      API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
+  barber:
+    image: "amstee/easy-cut-barber:${TAG}"
+    deploy:
+      replicas: 2
+    links:
+    - auth
+    networks:
+    - services
+    - esnet
+    environment:
+      API_CLIENT_ID: "${API_CLIENT_ID}"
+      API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
+  salon:
+    image: "amstee/easy-cut-salon:${TAG}"
+    deploy:
+      replicas: 2
+    links:
+    - auth
+    networks:
+    - services
+    - esnet
+    environment:
+      API_CLIENT_ID: "${API_CLIENT_ID}"
+      API_CLIENT_SECRET: "${API_CLIENT_SECRET}"
+
+
+
+

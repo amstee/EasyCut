@@ -53,15 +53,24 @@ func GetAppointment(w http.ResponseWriter, r *http.Request) {
 
 func FindAppointments(w http.ResponseWriter, r *http.Request) {
 	v := r.URL.Query()
+	var extUser types.ExtractResponse
 	var extract vars.ExtractQuery
 
-	if err := extract.Load(v); err != nil {
-		common.ResponseError("invalid url parameters", err, w, http.StatusBadRequest); return
+	token, err := common.GetBearer(r); if err == nil {
+		resp, err := request.ExpectJson(config.GetServiceURL("security")+"/secure/extract?user=true",
+			http.MethodGet, "Bearer "+token, nil, &extUser)
+			if err == nil && request.IsValid(resp.StatusCode) {
+				if err := extract.Load(v, extUser.UserId); err != nil {
+					common.ResponseError("invalid url parameters", err, w, http.StatusBadRequest); return
+				}
+				data, err := core.FindAppointments(extract); if err == nil {
+					common.ResponseJSON(data, w, http.StatusOK); return
+				}
+				common.ResponseError("Cannot find any appointment", err, w, http.StatusInternalServerError); return
+			}
+		common.ResponseError("Unable to find user", err, w, http.StatusBadRequest); return
 	}
-	data, err := core.FindAppointments(extract); if err == nil {
-		common.ResponseJSON(data, w, http.StatusOK); return
-	}
-	common.ResponseError("Cannot find any appointment", err, w, http.StatusInternalServerError)
+	common.ResponseError("unable to retrieve token", err, w, http.StatusBadRequest); return
 }
 
 func DeleteAppointment(w http.ResponseWriter, r *http.Request) {

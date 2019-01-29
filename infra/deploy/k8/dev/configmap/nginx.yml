@@ -5,66 +5,152 @@ metadata:
   namespace: dev
 data:
   nginx.conf : |
-    worker_processes 1;
-    events { worker_connections 2048; }
-    http {
-        sendfile on;
+  worker_processes 1;
 
-        upstream docker-auth {
-            server auth-service;
-        }
-        upstream docker-user {
-            server user-service;
-        }
-        upstream docker-es {
-            server es-service;
-        }
+  events { worker_connections 2048; }
 
-        server {
-            server_name http-easy-cut;
-            listen 80;
-            return 302 https://$host$request_uri;
-        }
-        server {
-            server_name https-easy-cut;
-            listen 443 ssl;
+  http {
 
-            ssl_certificate           /etc/nginx/cert.crt;
-            ssl_certificate_key       /etc/nginx/cert.key;
-            ssl_session_cache  builtin:1000  shared:SSL:10m;
-            ssl_protocols  TLSv1 TLSv1.1 TLSv1.2;
-            ssl_ciphers HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4;
-            ssl_prefer_server_ciphers on;
+  sendfile on;
 
-            location /auth {
-                return 302 /auth/;
-            }
-            location /user {
-                return 302 /user/;
-            }
-            location /auth/ {
-                proxy_pass         http://docker-auth/;
-                proxy_redirect     off;
-                proxy_set_header   Host $host;
-                proxy_set_header   X-Real-IP $remote_addr;
-                proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header   X-Forwarded-Host $server_name;
-            }
-            location /es/ {
-                proxy_pass         http://docker-es/;
-                proxy_redirect     off;
-                proxy_set_header   Host $host;
-                proxy_set_header   X-Real-IP $remote_addr;
-                proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header   X-Forwarded-Host $server_name;
-            }
-            location /user/ {
-                proxy_pass         http://docker-user/;
-                proxy_redirect     off;
-                proxy_set_header   Host $host;
-                proxy_set_header   X-Real-IP $remote_addr;
-                proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header   X-Forwarded-Host $server_name;
-            }
-        }
-    }
+  upstream docker-auth {
+  server auth-service;
+  }
+
+  upstream docker-user {
+  server user-service;
+  }
+
+  upstream docker-es {
+  server elasticsearch:9200;
+  }
+
+  upstream docker-salon {
+  server salon-service;
+  }
+
+  upstream docker-barber {
+  server barber-service;
+  }
+
+  upstream docker-perms {
+  server perms-service;
+  }
+
+  upstream docker-appointment {
+  server appointment-service;
+  }
+
+  upstream docker-rating {
+  server rating-service;
+  }
+
+  server {
+  server_name http-easy-cut;
+  listen 80;
+
+  location /auth {
+  return 302 /auth/;
+  }
+
+  location /user {
+  return 302 /user/;
+  }
+
+  location /barber {
+  return 302 /barber/;
+  }
+
+  location /salon {
+  return 302 /salon/;
+  }
+
+  location /es {
+  return 302 /es/;
+  }
+
+  location /appointment {
+  return 302 /appointment/;
+  }
+
+  location /rating {
+  return 302 /rating/;
+  }
+
+  location /perms {
+  return 302 /perms/;
+  }
+
+  location /auth/ {
+  proxy_pass         http://docker-auth/;
+  proxy_redirect     off;
+  proxy_set_header   Host $host;
+  proxy_set_header   X-Real-IP $remote_addr;
+  proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header   X-Forwarded-Host $server_name;
+  }
+
+  location /es/ {
+  proxy_pass         http://docker-es/;
+  proxy_redirect     off;
+  proxy_set_header   Host $host;
+  proxy_set_header   X-Real-IP $remote_addr;
+  proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header   X-Forwarded-Host $server_name;
+  }
+
+  location /user/ {
+  proxy_pass         http://docker-user/;
+  proxy_redirect     off;
+  proxy_set_header   Host $host;
+  proxy_set_header   X-Real-IP $remote_addr;
+  proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header   X-Forwarded-Host $server_name;
+  }
+
+  location /barber/ {
+  proxy_pass         http://docker-barber/;
+  proxy_redirect     off;
+  proxy_set_header   Host $host;
+  proxy_set_header   X-Real-IP $remote_addr;
+  proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header   X-Forwarded-Host $server_name;
+  }
+
+  location /salon/ {
+  proxy_pass         http://docker-salon/;
+  proxy_redirect     off;
+  proxy_set_header   Host $host;
+  proxy_set_header   X-Real-IP $remote_addr;
+  proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header   X-Forwarded-Host $server_name;
+  }
+
+  location /perms/ {
+  proxy_pass         http://docker-perms/;
+  proxy_redirect     off;
+  proxy_set_header   Host $host;
+  proxy_set_header   X-Real-IP $remote_addr;
+  proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header   X-Forwarded-Host $server_name;
+  }
+
+  location /rating/ {
+  proxy_pass         http://docker-rating/;
+  proxy_redirect     off;
+  proxy_set_header   Host $host;
+  proxy_set_header   X-Real-IP $remote_addr;
+  proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header   X-Forwarded-Host $server_name;
+  }
+
+  location /appointment/ {
+  proxy_pass         http://docker-appointment/;
+  proxy_redirect     off;
+  proxy_set_header   Host $host;
+  proxy_set_header   X-Real-IP $remote_addr;
+  proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header   X-Forwarded-Host $server_name;
+  }
+  }
+  }

@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: salon-service
+  namespace: dev
+  labels:
+    app: salon
+spec:
+  selector:
+    app: salon
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  - name: http2
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: salon
+  namespace: dev
+  labels:
+    app: salon
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: salon
+  template:
+    metadata:
+      labels:
+        app: salon
+    spec:
+      containers:
+      - name: salon
+        image: amstee/easy-cut-salon:dev
+        ports:
+        - containerPort: 8080
+        env:
+        - name: API_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: auth0-api
+              key: id
+        - name: API_CLIENT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: auth0-api
+              key: secret
